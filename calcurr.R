@@ -11,9 +11,10 @@ WareHouse.All.Ages.Env %>%
   group_by(common_name) %>%
   count() %>% filter(n>15000)
 
-spp <- "sablefish"
 
 #sablefish so lets look at that first
+spp <- "sablefish"
+
 processed_data <- process_length_data(data__ = WareHouse.All.Ages.Env,
                                       common_ = spp,
                                       sex_ = "F",

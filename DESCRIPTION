@@ -1,11 +1,13 @@
 Package: stspsize
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Process, Plot, and Analyze Length at Age Data Using a State-Space Model
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Author: Christine Stawitz
+Maintainer: Christine Stawitz <christine.stawitz@noaa.gov>
+Description: This package implements the state-space model described in Stawitz et al. (2014).
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
+RoxygenNote: 7.1.1
+Imports: dplyr,stringr,ggplot2,
+Remotes: nmfs-general-modeling-tools/nmfspalette

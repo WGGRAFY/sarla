@@ -1,3 +1,13 @@
+#' Length plots to length-at-age data
+#' This function creates three plots in the figs/ directory - one of mean length by age across years, one of raw length observations by year, color coded by age, and one of standardized lengths by year.
+#'
+#' @param data__ input data frame to plot; must have columns age_years, year, length_cm, and standardl
+#' @param name common name of the species, this will be used in the file name
+#'
+#' @return
+#' @export
+#'
+#' @examples
 length_plots <- function(data__, name){
   processed_summ <- data__ %>%
     group_by(age_years,year) %>% summarise("mean"=mean(length_cm))
