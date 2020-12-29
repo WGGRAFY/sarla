@@ -16,30 +16,30 @@ process_length_data <- function(data__, common_, sex_, years_ = NULL,
                                 survey_string, minimum_n){
 
   #Select species data, add year column
-  sable_full_data <- data__ %>%
+  full_data <- data__ %>%
     filter(common_name==common_) %>%
     filter(sex==sex_) %>%
     mutate(year = substr(datetime_utc_iso, 1, 4))
 
   #Add project/date filter
-  if(!is.null(years_)){
-    sable_data <- sable_full_data %>%
+  if(!is.na(years_)){
+    spp_data <- full_data %>%
                     filter((str_detect(project, survey_string[1]) & (year < years_))|(str_detect(project, survey_string[2]) & (year >= years_)))
   } else{
-    sable_data <- sable_full_data %>% filter(str_detect(project, survey_string))
+    spp_data <- full_data %>% filter(str_detect(project, survey_string))
   }
 
-  sable_data <- sable_data %>%
+  spp_data <- spp_data %>%
     select(age_years, year, length_cm, project) %>%
     mutate(year = as.numeric(year))
 
   #Get mean stats
-  mean_mat<- get_std_length(sable_data)
+  mean_mat<- get_std_length(spp_data)
 
   #
-  maxage <- filter(mean_mat,count<minimum_n)%>% select(age_years) %>% min()
-  processed_data <- left_join(sable_data, mean_mat, by="age_years") %>%
-    filter(age_years <= maxage) %>%
+  ages <- filter(mean_mat,count<minimum_n)%>% select(age_years)
+  processed_data <- left_join(spp_data, mean_mat, by="age_years") %>%
+    filter(!(age_years %in% ages)) %>%
     mutate(standardl = (length_cm-meanl)/sdl)
 
 
