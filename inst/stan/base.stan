@@ -14,11 +14,9 @@ data {
 // accepts two parameters 'mu' and 'sigma'.
 parameters {
   real beta;
-  real xaa_0;
   matrix[Nages,Nyears] xaa;
   real<lower=0> sigma_p;
   real<lower=0> sigma_o;
-  real<lower=0> sigma_0;
 }
 
 // The model to be estimated. We model the output
@@ -26,12 +24,13 @@ parameters {
 // and standard deviation 'sigma'.
 model {
 
-  xaa[1,1] ~ normal(0,sigma_0);
+  xaa[1,1] ~ normal(0,sigma_p);
+  laa[1,1] ~ normal(xaa[1,1],sigma_o);
 
-  for (i in 1:Nages) {
-    for(y in 1:Nyears){
-      xaa[i,y] ~ normal(beta*xaa[i-1,y-1], sigma_p);
-      laa[i,y] ~ normal(xaa[i,y], sigma_o);
+  for (i in 2:Nages) {
+    for(y in 2:Nyears){
+      xaa[y,i] ~ normal(beta*xaa[y-1,i-1], sigma_p);
+      laa[y,i] ~ normal(xaa[y,i], sigma_o);
     }
   }
 }
