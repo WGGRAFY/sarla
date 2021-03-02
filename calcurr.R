@@ -12,6 +12,7 @@ WareHouse.All.Ages.Env %>%
   group_by(common_name) %>%
   count() %>% filter(n>15000)
 
+devtools::load_all(".")
 
 #sablefish so lets look at that first
 spp <- c("sablefish", "darkblotched rockfish", "shortbelly rockfish", "Pacific hake",
@@ -42,16 +43,19 @@ model_data[[i]] <- processed_data %>%
 }
 
 
-
+#format input data for STAN
 input_data <- list(Nages = 7,
                    Nyears = 22,
-                   laa = as.matrix(model_data[[1]][-2,3:9]))
+                   laa = t(as.matrix(model_data[[1]][-2,3:9])))
 
 #Sys.setenv(PATH = paste("C:\\rtools40\\mingw_64\\bin", Sys.getenv("PATH"), sep=";"))
 
+#Run base model
+stanc("./inst/stan/base.stan")
 mod <- stan("./inst/stan/base.stan",
             iter = 2000,
             warmup = 1000,
             data = input_data)
 
+#Look at shinystan output
 shinystan(mod)
