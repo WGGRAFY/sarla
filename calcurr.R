@@ -87,8 +87,9 @@ stan_dat <- list()
 
 #Run base model
 mod <- stan("./inst/stan/base.stan",
-            iter = 100,
-            data = input_data)
+            iter = 2000, chains = 6,
+            control = list(adapt_delta = 0.99),
+            data = input_data, pars = c("xaa", "sigma_p", "sigma_o", "beta"))
 mod
 
 #Look at shinystan output

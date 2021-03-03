@@ -1,36 +1,35 @@
-//
-// This Stan program defines a simple model, with a
-// vector of values 'y' modeled as normally distributed
-// with mean 'mu' and standard deviation 'sigma'.
-//
-// The input data is a matrix 'laa' of dimensions Nages*Nyears
 data {
   int<lower=0> Nages;
   int<lower=0> Nyears;
   matrix[Nages, Nyears] laa;
 }
-
-// The parameters accepted by the model. Our model
-// accepts two parameters 'mu' and 'sigma'.
 parameters {
   real beta;
-  matrix[Nages,Nyears] xaa;
+  matrix[Nages,Nyears] xaa_raw;
   real<lower=0> sigma_p;
   real<lower=0> sigma_o;
 }
-
-// The model to be estimated. We model the output
-// 'y' to be normally distributed with mean 'mu'
-// and standard deviation 'sigma'.
-model {
-
-  xaa[1,1] ~ normal(0,sigma_p);
-  laa[1,1] ~ normal(xaa[1,1],sigma_o);
-
-  for (i in 2:Nages) {
-    for(y in 2:Nyears){
-      xaa[i,y] ~ normal(beta*xaa[i-1,y-1], sigma_p);
-      laa[i,y] ~ normal(xaa[i,y], sigma_o);
+transformed parameters {
+  matrix[Nages,Nyears] xaa;
+  for (i in 1:Nages) {
+    for(y in 1:Nyears){
+      if (i == 1 || y == 1) {
+        xaa[i, y] = xaa_raw[i, y] * sigma_p;  // non-centered parameterization
+      } else {
+        xaa[i, y] = beta * xaa_raw[i - 1, y - 1] * sigma_p;  // non-centered parameterization
+      }
     }
   }
+}
+model {
+  // non-centered parameterization:
+  to_vector(xaa_raw) ~ std_normal();
+
+  // observation model:
+  to_vector(laa) ~ normal(to_vector(xaa), sigma_o);
+
+  // priors:
+  sigma_o ~ student_t(7, 0, 2);
+  sigma_p ~ student_t(7, 0, 2);
+  beta ~ normal(0, 3);
 }
