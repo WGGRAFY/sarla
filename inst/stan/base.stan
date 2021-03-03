@@ -29,8 +29,8 @@ model {
 
   for (i in 2:Nages) {
     for(y in 2:Nyears){
-      xaa[y,i] ~ normal(beta*xaa[y-1,i-1], sigma_p);
-      laa[y,i] ~ normal(xaa[y,i], sigma_o);
+      xaa[i,y] ~ normal(beta*xaa[i-1,y-1], sigma_p);
+      laa[i,y] ~ normal(xaa[i,y], sigma_o);
     }
   }
 }
