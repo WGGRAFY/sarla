@@ -11,13 +11,10 @@ parameters {
 }
 transformed parameters {
   matrix[Nages,Nyears] xaa;
-  for (i in 1:Nages) {
-    for(y in 1:Nyears){
-      if (i == 1 || y == 1) {
-        xaa[i, y] = xaa_raw[i, y] * sigma_p;  // non-centered parameterization
-      } else {
-        xaa[i, y] = beta * xaa_raw[i - 1, y - 1] * sigma_p;  // non-centered parameterization
-      }
+  xaa[1, 1] = sigma_p;  // non-centered parameterization
+  for (i in 2:Nages) {
+    for(y in 2:Nyears){
+      xaa[i, y] =  beta * xaa_raw[i - 1, y - 1] * sigma_p;  // non-centered parameterization
     }
   }
 }

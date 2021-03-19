@@ -4,6 +4,8 @@ require(ggplot2)
 require(tidyr)
 require(nmfspalette)
 require(rstan)
+options(mc.cores = parallel::detectCores())
+rstan_options(auto_write = TRUE)
 load("./data/WareHouse_2019.RData")
 str(WareHouse.All.Ages.Env)
 
@@ -50,12 +52,45 @@ input_data <- list(Nages = 7,
 
 #Sys.setenv(PATH = paste("C:\\rtools40\\mingw_64\\bin", Sys.getenv("PATH"), sep=";"))
 
+# sim data:
+sim <- function(sigma_p = 0.2, sigma_o = 0.2) {
+  Nages <- 8
+  Nyears <- 12
+  beta <- 0.5
+  xaa <- matrix(nrow = Nages, ncol = Nyears)
+  laa <- matrix(nrow = Nages, ncol = Nyears)
+
+  for (i in 1:Nages) {
+    xaa[i,1] <- rnorm(1, 0, sigma_p)
+  }
+  for (y in 1:Nyears) {
+    xaa[1,y] <- rnorm(1, 0, sigma_p)
+  }
+  for (i in 2:Nages) {
+    for(y in 2:Nyears){
+      xaa[i,y] <- rnorm(1, beta*xaa[i-1,y-1], sigma_p)
+    }
+  }
+  for (i in 2:Nages) {
+    for(y in 2:Nyears){
+      laa[i,y] <- rnorm(1, xaa[i,y], sigma_o)
+    }
+  }
+  laa
+}
+dat <- sim()
+matplot(t(dat), type = "l")
+
+stan_dat <- list()
+
+# stopped here...
+
 #Run base model
-stanc("./inst/stan/base.stan")
 mod <- stan("./inst/stan/base.stan",
-            iter = 2000,
-            warmup = 1000,
-            data = input_data)
+            iter = 2000, chains = 6,
+            control = list(adapt_delta = 0.99),
+            data = input_data, pars = c("xaa", "sigma_p", "sigma_o", "beta"))
+mod
 
 #Look at shinystan output
 shinystan(mod)
