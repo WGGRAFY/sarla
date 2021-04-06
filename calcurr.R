@@ -26,22 +26,22 @@ surv_string[4:7] <- "Triennial|Combination"
 surv_string[[3]] <- "Combination"
 model_data <- vector("list")
 for(i in 1:length(spp)){
-processed_data <- process_length_data(data__ = WareHouse.All.Ages.Env,
-                                      common_ = spp[i],
-                                      sex_ = "F",
-                                      survey_string = surv_string[[i]],
-                                      years_ = years[i],
-                                      minimum_n = 10,
-                                      plot_bool = F)
-
-#widen data so it is by row = age and columns = year
-model_data[[i]] <- processed_data %>%
-  select(age_years, year, standardl) %>%
-  unique() %>%
-  arrange(age_years) %>%
-  pivot_wider(names_from=age_years, values_from=standardl) %>%
-  arrange(year)
-
+  processed_data <- process_length_data(data__ = WareHouse.All.Ages.Env,
+                                        common_ = spp[i],
+                                        sex_ = "F",
+                                        survey_string = surv_string[[i]],
+                                        years_ = years[i],
+                                        minimum_n = 10,
+                                        plot_bool = F)
+  
+  #widen data so it is by row = age and columns = year
+  model_data[[i]] <- processed_data %>%
+    select(age_years, year, standardl) %>%
+    unique() %>%
+    arrange(age_years) %>%
+    pivot_wider(names_from=age_years, values_from=standardl) %>%
+    arrange(year)
+  
 }
 
 
@@ -59,7 +59,7 @@ sim <- function(sigma_p = 0.2, sigma_o = 0.2) {
   beta <- 0.3
   xaa <- matrix(nrow = Nages, ncol = Nyears)
   laa <- matrix(nrow = Nages, ncol = Nyears)
-
+  
   for (i in 1:Nages) {
     xaa[i,1] <- rnorm(1, 0, sigma_p)
   }
@@ -101,4 +101,4 @@ install.packages("shinystan")
 require(shinystan)
 shinmod <- as.shinystan(mod)
 
-launch_Shinystan(Shinmod)
+launch_shinystan(shinmod)
