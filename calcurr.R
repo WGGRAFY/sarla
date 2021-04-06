@@ -54,9 +54,9 @@ input_data <- list(Nages = 7,
 
 # sim data:
 sim <- function(sigma_p = 0.2, sigma_o = 0.2) {
-  Nages <- 8
-  Nyears <- 12
-  beta <- 0.5
+  Nages <- 7
+  Nyears <- 22
+  beta <- 0.3
   xaa <- matrix(nrow = Nages, ncol = Nyears)
   laa <- matrix(nrow = Nages, ncol = Nyears)
 
@@ -71,8 +71,8 @@ sim <- function(sigma_p = 0.2, sigma_o = 0.2) {
       xaa[i,y] <- rnorm(1, beta*xaa[i-1,y-1], sigma_p)
     }
   }
-  for (i in 2:Nages) {
-    for(y in 2:Nyears){
+  for (i in 1:Nages) {
+    for(y in 1:Nyears){
       laa[i,y] <- rnorm(1, xaa[i,y], sigma_o)
     }
   }
@@ -81,16 +81,24 @@ sim <- function(sigma_p = 0.2, sigma_o = 0.2) {
 dat <- sim()
 matplot(t(dat), type = "l")
 
-stan_dat <- list()
 
+
+stan_dat <- list()
+stan_dat$laa <- dat
+stan_dat$Nages <-7
+stan_dat$Nyears <- 22
 # stopped here...
 
 #Run base model
 mod <- stan("./inst/stan/base.stan",
             iter = 2000, chains = 6,
             control = list(adapt_delta = 0.99),
-            data = input_data, pars = c("xaa", "sigma_p", "sigma_o", "beta"))
+            data = stan_dat, pars = c("xaa", "sigma_p", "sigma_o", "beta"))
 mod
 
 #Look at shinystan output
-shinystan(mod)
+install.packages("shinystan")
+require(shinystan)
+shinmod <- as.shinystan(mod)
+
+launch_Shinystan(Shinmod)
