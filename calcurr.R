@@ -4,6 +4,7 @@ require(ggplot2)
 require(tidyr)
 require(nmfspalette)
 require(rstan)
+
 options(mc.cores = parallel::detectCores())
 rstan_options(auto_write = TRUE)
 load("./data/WareHouse_2019.RData")
