@@ -9,6 +9,7 @@ parameters {
   real<lower=0> sigma_p;
   real<lower=0> sigma_o;
   vector[Nyears - 1] gamma_y;
+  // matrix[Nages, Nyears] X; // design matrix
 }
 transformed parameters {
   matrix[Nages, Nyears] xaa;
@@ -17,7 +18,7 @@ transformed parameters {
       if (i == 1 || y == 1) {
         xaa[i, y] = eps[i, y];
       } else {
-        xaa[i, y] = beta * xaa[i - 1, y - 1] + gamma_y[y - 1] +
+        xaa[i, y] = beta * xaa[i - 1, y - 1] +
                     sigma_p * eps[i, y];
       }
     }
