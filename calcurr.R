@@ -84,6 +84,7 @@ sim <- function(sigma_p = 0.2, sigma_o = 0.2) {
 }
 set.seed(10291)
 dat <- sim()
+par(mfrow = c(1, 1))
 matplot(t(dat$xaa), type = "l", lty = 1)
 matplot(t(dat$laa), type = "l", lty = 1)
 
@@ -94,30 +95,31 @@ stan_dat$Nyears <- 22
 
 # pars <- c("gamma_y", "sigma_p", "sigma_o", "beta", "xaa", "laa_postpred")
 pars <- c("sigma_p", "sigma_o", "beta", "xaa", "gamma_y")
+# pars <- c("sigma_p", "sigma_o", "beta", "xaa")
 
-# init <- function() {
-#   list(
-#     sigma_o = rlnorm(1, log(0.2), 0.1),
-#     sigma_p = rlnorm(1, log(0.2), 0.1),
-#     beta = runif(1, 0.2, 0.6)
-#   )
-# }
+init <- function() {
+  list(
+    sigma_o = rlnorm(1, log(0.2), 0.1),
+    sigma_p = rlnorm(1, log(0.2), 0.1),
+    beta = runif(1, 0.2, 0.6)
+  )
+}
 
 mod <- stan("inst/stan/base.stan",
   iter = 1000,
   chains = 4,
   data = stan_dat,
-  pars = pars
-  # init = init,
-  # control = list(adapt_delta = 0.99)
+  pars = pars,
+  init = init,
+  control = list(adapt_delta = 0.999)
 )
 print(mod, pars = pars[1:3])
 
 ## Look at shinystan output
 ## install.packages("shinystan")
-require(shinystan)
-shinmod <- as.shinystan(mod)
-launch_shinystan(shinmod)
+# require(shinystan)
+# shinmod <- as.shinystan(mod)
+# launch_shinystan(shinmod)
 
 par(mfrow = c(1, 3))
 post <- extract(mod)
