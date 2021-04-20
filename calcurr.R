@@ -56,10 +56,10 @@ input_data <- list(Nages = 7,
 sim <- function(sigma_p = 0.2, sigma_o = 0.2) {
   Nages <- 7
   Nyears <- 22
-  beta <- 0.4
+  beta <- 0.3
   xaa <- matrix(nrow = Nages, ncol = Nyears)
   laa <- matrix(nrow = Nages, ncol = Nyears)
-  gamma_y <- rnorm(Nyears, 0, 0.3)
+  gamma_y <- rnorm(Nyears, 0, 0.2)
 
   for (i in 1:Nages) {
     xaa[i,1] <- rnorm(1, 0, sigma_p)
@@ -82,7 +82,7 @@ sim <- function(sigma_p = 0.2, sigma_o = 0.2) {
   }
   list(gamma_y = gamma_y, xaa = xaa, laa = laa)
 }
-set.seed(10291)
+set.seed(123)
 dat <- sim()
 par(mfrow = c(1, 1))
 matplot(t(dat$xaa), type = "l", lty = 1)
@@ -97,21 +97,26 @@ stan_dat$Nyears <- 22
 pars <- c("sigma_p", "sigma_o", "beta", "xaa", "gamma_y")
 # pars <- c("sigma_p", "sigma_o", "beta", "xaa")
 
-init <- function() {
-  list(
-    sigma_o = rlnorm(1, log(0.2), 0.1),
-    sigma_p = rlnorm(1, log(0.2), 0.1),
-    beta = runif(1, 0.2, 0.6)
-  )
-}
+x <- seq(0, 1, length.out = 100)
+plot(x, dlnorm(x, log(0.2), 0.1), type = "l")
+
+# init <- function() {
+#   list(
+#     sigma_o = rlnorm(1, log(0.2), 0.1),
+#     sigma_p = rlnorm(1, log(0.2), 0.1),
+#     beta = runif(1, 0.2, 0.6)
+#   )
+# }
+
+stan_dat$sigma_o_prior <- c(log(0.2), 0.2)
 
 mod <- stan("inst/stan/base.stan",
   iter = 1000,
   chains = 4,
   data = stan_dat,
-  pars = pars,
-  init = init,
-  control = list(adapt_delta = 0.999)
+  pars = pars
+  # init = init,
+  # control = list(adapt_delta = 0.99, max_treedepth = 20)
 )
 print(mod, pars = pars[1:3])
 
@@ -124,8 +129,8 @@ print(mod, pars = pars[1:3])
 par(mfrow = c(1, 3))
 post <- extract(mod)
 hist(post$sigma_p);abline(v = 0.2)
-hist(post$sigma_o, xlim = range(c(0.1, post$sigma_o)));abline(v = 0.1)
-hist(post$beta);abline(v = 0.4)
+hist(post$sigma_o, xlim = range(c(0.1, post$sigma_o)));abline(v = 0.2)
+hist(post$beta);abline(v = 0.3)
 
 post_xaa <- tidybayes::gather_draws(mod, xaa[i,y])
 post_gamma_y <- tidybayes::gather_draws(mod, gamma_y[y])

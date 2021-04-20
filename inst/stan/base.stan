@@ -2,6 +2,7 @@ data {
   int<lower=1> Nages;
   int<lower=1> Nyears;
   matrix[Nages, Nyears] laa;
+  real sigma_o_prior[2];
 }
 parameters {
   real<lower=-1, upper=1> beta;
@@ -40,7 +41,8 @@ transformed parameters {
 model {
   to_vector(pro_error_raw) ~ std_normal();
   to_vector(laa) ~ normal(to_vector(xaa), sigma_o);
-  sigma_o ~ student_t(3, 0, 1);
+  // sigma_o ~ student_t(3, 0, 1);
+  sigma_o ~ lognormal(sigma_o_prior[1], sigma_o_prior[2]);
   sigma_p ~ student_t(3, 0, 1);
   beta ~ std_normal();
   gamma_y ~ std_normal();
