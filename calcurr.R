@@ -33,7 +33,7 @@ for(i in 1:length(spp)){
                                         years_ = years[i],
                                         minimum_n = 10,
                                         plot_bool = F)
-  
+
   #widen data so it is by row = age and columns = year
   model_data[[i]] <- processed_data %>%
     select(age_years, year, standardl) %>%
@@ -41,7 +41,7 @@ for(i in 1:length(spp)){
     arrange(age_years) %>%
     pivot_wider(names_from=age_years, values_from=standardl) %>%
     arrange(year)
-  
+
 }
 
 
@@ -56,10 +56,11 @@ input_data <- list(Nages = 7,
 sim <- function(sigma_p = 0.2, sigma_o = 0.2) {
   Nages <- 7
   Nyears <- 22
-  beta <- 0.3
+  beta <- 0.4
   xaa <- matrix(nrow = Nages, ncol = Nyears)
   laa <- matrix(nrow = Nages, ncol = Nyears)
-  
+  gamma_y <- rnorm(Nyears, 0, 0.3)
+
   for (i in 1:Nages) {
     xaa[i,1] <- rnorm(1, 0, sigma_p)
   }
@@ -71,34 +72,88 @@ sim <- function(sigma_p = 0.2, sigma_o = 0.2) {
       xaa[i,y] <- rnorm(1, beta*xaa[i-1,y-1], sigma_p)
     }
   }
+  for (y in 2:Nyears) {
+    xaa[,y] <- xaa[,y] + gamma_y[y]
+  }
   for (i in 1:Nages) {
     for(y in 1:Nyears){
       laa[i,y] <- rnorm(1, xaa[i,y], sigma_o)
     }
   }
-  laa
+  list(gamma_y = gamma_y, xaa = xaa, laa = laa)
 }
+set.seed(1029)
 dat <- sim()
-matplot(t(dat), type = "l")
-
-
+matplot(t(dat$xaa), type = "l", lty = 1)
+matplot(t(dat$laa), type = "l", lty = 1)
 
 stan_dat <- list()
-stan_dat$laa <- dat
-stan_dat$Nages <-7
+stan_dat$laa <- dat$laa
+stan_dat$Nages <- 7
 stan_dat$Nyears <- 22
-# stopped here...
 
-#Run base model
-mod <- stan("./inst/stan/base.stan",
-            iter = 2000, chains = 6,
-            control = list(adapt_delta = 0.99),
-            data = stan_dat, pars = c("xaa", "sigma_p", "sigma_o", "beta"))
-mod
+# pars <- c("gamma_y", "sigma_p", "sigma_o", "beta", "xaa", "laa_postpred")
+pars <- c("sigma_p", "sigma_o", "beta", "xaa", "gamma_y")
 
-#Look at shinystan output
-install.packages("shinystan")
-require(shinystan)
-shinmod <- as.shinystan(mod)
+init <- function() {
+  list(
+    sigma_o = rlnorm(1, 0.2, 0.05),
+    sigma_p = rlnorm(1, 0.2, 0.05),
+    beta = runif(1, 0.3, 0.5)
+  )
+}
 
-launch_shinystan(shinmod)
+mod <- stan("inst/stan/base.stan",
+  iter = 2000,
+  chains = 4,
+  data = stan_dat,
+  pars = pars,
+  init = init,
+  control = list(adapt_delta = 0.99))
+print(mod, pars = pars[1:3])
+
+## Look at shinystan output
+## install.packages("shinystan")
+# require(shinystan)
+# shinmod <- as.shinystan(mod)
+# launch_shinystan(shinmod)
+
+post <- extract(mod)
+hist(post$sigma_p);abline(v = 0.2)
+hist(post$sigma_o, xlim = range(c(0.1, post$sigma_o)));abline(v = 0.1)
+hist(post$beta);abline(v = 0.4)
+
+post_xaa <- tidybayes::gather_draws(mod, xaa[i,y])
+post_gamma_y <- tidybayes::gather_draws(mod, gamma_y[y])
+
+xaa <- dat$xaa %>% reshape2::melt() %>%
+  rename(i = Var1, y = Var2, .value = value) %>%
+  as_tibble()
+
+post_xaa %>%
+  group_by(y, i) %>%
+  summarise(
+    lwr = quantile(.value, 0.025),
+    upr = quantile(.value, 0.975),
+    med = median(.value)) %>%
+  ggplot(aes(y, med, ymin = lwr, ymax = upr)) +
+  facet_wrap(~i) +
+  geom_line(alpha = 1) +
+  geom_ribbon(alpha = 0.5) +
+  geom_line(data = xaa, colour = "red",
+    mapping = aes(y, .value), inherit.aes = FALSE)
+
+gamma_y <- data.frame(y = seq_along(dat$gamma_y) - 1, med = dat$gamma_y)
+gamma_y <- gamma_y[-1,]
+
+post_gamma_y %>%
+  group_by(y) %>%
+  summarise(
+    lwr = quantile(.value, 0.025),
+    upr = quantile(.value, 0.975),
+    med = median(.value)) %>%
+  ggplot(aes(y, med, ymin = lwr, ymax = upr)) +
+  geom_line(alpha = 1) +
+  geom_ribbon(alpha = 0.5) +
+  geom_line(data = gamma_y, colour = "red",
+    mapping = aes(y, med), inherit.aes = FALSE)
