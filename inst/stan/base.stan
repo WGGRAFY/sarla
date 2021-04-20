@@ -5,7 +5,7 @@ data {
 }
 parameters {
   real<lower=-1, upper=1> beta;
-  matrix[Nages, Nyears] eps;
+  matrix[Nages, Nyears] pro_error_raw;
   real<lower=0> sigma_p;
   real<lower=0> sigma_o;
   vector[Nyears - 1] gamma_y;
@@ -16,10 +16,10 @@ transformed parameters {
   for (i in 1:Nages) {
     for (y in 1:Nyears) {
       if (i == 1 || y == 1) {
-        xaa[i, y] = eps[i, y];
+        xaa[i, y] = pro_error_raw[i, y];
       } else {
         xaa[i, y] = beta * xaa[i - 1, y - 1] +
-                    sigma_p * eps[i, y];
+                    sigma_p * pro_error_raw[i, y];
       }
     }
   }
@@ -36,8 +36,7 @@ transformed parameters {
   }
 }
 model {
-  to_vector(eps) ~ std_normal();
-  // to_vector(laa) ~ normal(to_vector(xaa), sigma_o);
+  to_vector(pro_error_raw) ~ std_normal();
   to_vector(obs_error_raw ) ~ std_normal();
   sigma_o ~ student_t(3, 0, 1);
   sigma_p ~ student_t(3, 0, 1);
