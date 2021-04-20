@@ -82,7 +82,7 @@ sim <- function(sigma_p = 0.2, sigma_o = 0.2) {
   }
   list(gamma_y = gamma_y, xaa = xaa, laa = laa)
 }
-set.seed(1029)
+set.seed(10291)
 dat <- sim()
 matplot(t(dat$xaa), type = "l", lty = 1)
 matplot(t(dat$laa), type = "l", lty = 1)
@@ -97,9 +97,9 @@ pars <- c("sigma_p", "sigma_o", "beta", "xaa", "gamma_y")
 
 init <- function() {
   list(
-    sigma_o = rlnorm(1, 0.2, 0.05),
-    sigma_p = rlnorm(1, 0.2, 0.05),
-    beta = runif(1, 0.3, 0.5)
+    sigma_o = rlnorm(1, log(0.2), 0.1),
+    sigma_p = rlnorm(1, log(0.2), 0.1),
+    beta = runif(1, 0.2, 0.6)
   )
 }
 
@@ -114,10 +114,11 @@ print(mod, pars = pars[1:3])
 
 ## Look at shinystan output
 ## install.packages("shinystan")
-# require(shinystan)
-# shinmod <- as.shinystan(mod)
-# launch_shinystan(shinmod)
+require(shinystan)
+shinmod <- as.shinystan(mod)
+launch_shinystan(shinmod)
 
+par(mfrow = c(1, 3))
 post <- extract(mod)
 hist(post$sigma_p);abline(v = 0.2)
 hist(post$sigma_o, xlim = range(c(0.1, post$sigma_o)));abline(v = 0.1)

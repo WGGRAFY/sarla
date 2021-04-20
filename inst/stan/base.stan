@@ -9,7 +9,7 @@ parameters {
   real<lower=0> sigma_p;
   real<lower=0> sigma_o;
   vector[Nyears - 1] gamma_y;
-  // matrix[Nages, Nyears] X; // design matrix
+  matrix[Nages, Nyears] obs_error_raw;
 }
 transformed parameters {
   matrix[Nages, Nyears] xaa;
@@ -28,12 +28,19 @@ transformed parameters {
       xaa[i, y] = xaa[i, y] + gamma_y[y - 1];
     }
   }
+  // non-centered observation error:
+  for (i in 1:Nages) {
+    for (y in 1:Nyears) {
+      xaa[i, y] = xaa[i, y] + sigma_o * obs_error_raw[i, y];
+    }
+  }
 }
 model {
   to_vector(eps) ~ std_normal();
-  to_vector(laa) ~ normal(to_vector(xaa), sigma_o);
-  sigma_o ~ student_t(3, 0, 2);
-  sigma_p ~ student_t(3, 0, 2);
+  // to_vector(laa) ~ normal(to_vector(xaa), sigma_o);
+  to_vector(obs_error_raw ) ~ std_normal();
+  sigma_o ~ student_t(3, 0, 1);
+  sigma_p ~ student_t(3, 0, 1);
   beta ~ std_normal();
   gamma_y ~ std_normal();
 }
