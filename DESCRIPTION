@@ -25,7 +25,7 @@ VignetteBuilder:
 Suggests: 
     knitr
 Remotes: 
-    github::nmfs-general-modeling-tools/nmfspalette
+    github::nmfs-general-modeling-tools/nmfspalette,
     github::stan-dev/cmdstanr
 Encoding: UTF-8
 LazyData: true
