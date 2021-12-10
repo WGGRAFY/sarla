@@ -14,7 +14,7 @@
 #'   Defaults to 0.
 #' @return list of simulated data
 #' @export
-sim <- function(sigma_p = 0.2, sigma_o = 0.1,
+sarla_sim <- function(sigma_p = 0.2, sigma_o = 0.1,
                 Nages = 7, Nyears = 22,
                 beta = 0.5,
                 sigma_p_X0 = sigma_p,

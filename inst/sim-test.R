@@ -1,53 +1,19 @@
-Sys.setenv(MAKEFLAGS = "-j2")
-Sys.setenv("R_REMOTES_NO_ERRORS_FROM_WARNINGS" = "true")
-remotes::install_github("WGGRAFY/sarla", INSTALL_opts = "--no-multiarch", force = TRUE)
-library(sarla)
+# library(sarla)
+devtools::load_all()
 library(dplyr)
 library(ggplot2)
-# install.packages("cmdstanr", repos = c("https://mc-stan.org/r-packages/", getOption("repos")))
-library(cmdstanr)
-# cmdstanr::install_cmdstan()
 
-# Set the seed and simulate data, moved sim into its own file
 set.seed(999)
-dat <- sim(
+dat <- sarla_sim(
   Nages = 7, Nyears = 22, sigma_o = 0.2, beta = 0.7,
   gamma_y_sd = 0.2, delta_c_sd = 0, eta_c_sd = 0.2, sigma_p_X0 = 0
 )
 
-# Moved plotting and moving into stan_dat  into a .R function
 stan_dat <- plot_and_fill_data(dat)
 
-# not sure if we need this
-# x <- seq(0, 1, length.out = 300)
-# plot(x, dlnorm(x, log(0.2), 0.5), type = "l")
-# sd(rlnorm(1e6, log(0.2), 0.4))
-
-fit <- stan_base(stan_dat,
-  n_chains = 2,
-  n_iter = 1000,
-  n_warmup = 500,
-  n_thin = 1,
-  n_save = 50,
-  verbose = TRUE,
-  seed = 1
-)
-
-# Run the model
-mod <- cmdstan_model("inst/stan/base.stan")
-
-
-fit <- mod$sample(
-  data = stan_dat,
-  # seed = 2,
-  chains = 4,
-  # https://discourse.mc-stan.org/t/scale-parameter-is-0-but-must-be-0-can-i-do-anything-to-deal-with-this/19453/5
-  step_size = 0.1,
-  iter_sampling = 1500,
-  iter_warmup = 1500,
-  parallel_chains = 4,
-  adapt_delta = 0.98,
-  max_treedepth = 10
+fit <- fit_sarla(stan_dat,
+  chains = 1,
+  iter = 100
 )
 
 # Look at fitted model
