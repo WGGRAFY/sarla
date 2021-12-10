@@ -23,7 +23,15 @@ stan_dat <- plot_and_fill_data(dat)
 # plot(x, dlnorm(x, log(0.2), 0.5), type = "l")
 # sd(rlnorm(1e6, log(0.2), 0.4))
 
-fit <- base_stan(stan_dat)
+fit <- stan_base(stan_dat,
+  n_chains = 2,
+  n_iter = 1000,
+  n_warmup = 500,
+  n_thin = 1,
+  n_save = 50,
+  verbose = TRUE,
+  seed = 1
+)
 
 # Run the model
 mod <- cmdstan_model("inst/stan/base.stan")

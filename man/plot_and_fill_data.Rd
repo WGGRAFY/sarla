@@ -8,7 +8,8 @@ plot_and_fill_data(
   dat,
   year_effects = 1L,
   cohort_effects = 0L,
-  init_effects = 1L
+  init_effects = 1L,
+  plot = FALSE
 )
 }
 \arguments{
