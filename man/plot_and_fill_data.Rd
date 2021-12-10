@@ -20,6 +20,8 @@ plot_and_fill_data(
 \item{cohort_effects}{scalar, 1 if cohort effects are estimated}
 
 \item{init_effects}{scalar, 1 if initial size effects are estimated}
+
+\item{plot}{Make a plot?}
 }
 \value{
 stan_dat a list containing needed Stan slots

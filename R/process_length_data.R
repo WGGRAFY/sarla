@@ -7,6 +7,7 @@
 #' @param minimum_n The minimum sample size used to set the maximum age of fish
 #'   observed
 #' @param plot_bool TRUE or False should plots be made
+#' @param ... Other arguments to pass to [get_std_length()]
 #'
 #' @return the processed length data
 #' @export

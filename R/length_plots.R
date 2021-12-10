@@ -7,6 +7,7 @@
 #'   length_cm, and standardl
 #' @param name common name of the species, this will be used in the file name
 #'
+#' @importFrom nmfspalette scale_color_nmfs
 #' @return
 #' @export
 length_plots <- function(data__, name) {
@@ -15,9 +16,9 @@ length_plots <- function(data__, name) {
     summarise("mean" = mean(length_cm))
 
   # Plot mean length by year and age
-  p <- ggplot(processed_summ, aes(
-    x = year, y = mean,
-    group = factor(age_years), color = factor(age_years)
+  p <- ggplot(processed_summ, aes_string(
+    x = "year", y = "mean",
+    group = "factor(age_years)", color = "factor(age_years)"
   )) +
     geom_path() +
     scale_color_nmfs(name = "Age (years)") +
@@ -27,7 +28,7 @@ length_plots <- function(data__, name) {
   ggsave(paste("figs/", "mean_laa_", name, ".png", sep = ""), p)
 
   # Set up base ggplot object & theme
-  pbase <- ggplot(data__, aes(x = year, group = factor(age_years), color = factor(age_years))) +
+  pbase <- ggplot(data__, aes_string(x = "year", group = "factor(age_years)", color = "factor(age_years)")) +
     scale_color_nmfs(name = "Age (years)") +
     theme_classic()
 

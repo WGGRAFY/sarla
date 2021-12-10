@@ -5,7 +5,7 @@
 #' @param Nages integer setting the number of ages. 7 by default.
 #' @param Nyears integer setting the number of years. 22 by default.
 #' @param beta double setting the degree of autocorrelation. 0.5 by default.
-#' @param sigma_p_x0 double setting the sd of variation in starting values.
+#' @param sigma_p_X0 double setting the sd of variation in starting values.
 #'   Defaults to equivalent to \code{sigma_p}
 #' @param gamma_y_sd double setting the sd of year variation. Default is 0.
 #' @param delta_c_sd double setting the sd of cohort effect variation. Defaults

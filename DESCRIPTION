@@ -17,8 +17,12 @@ Imports:
     dplyr,
     ggplot2,
     methods,
+    nmfspalette,
+    reshape2,
     stringr
 VignetteBuilder: 
+    knitr
+Suggests: 
     knitr
 Remotes: 
     github::nmfs-general-modeling-tools/nmfspalette

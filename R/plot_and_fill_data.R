@@ -4,7 +4,10 @@
 #' @param year_effects scalar, 1 if year effects are estimated
 #' @param cohort_effects scalar, 1 if cohort effects are estimated
 #' @param init_effects scalar, 1 if initial size effects are estimated
+#' @param plot Make a plot?
+#'
 #' @return stan_dat a list containing needed Stan slots
+#'
 #' @export
 plot_and_fill_data <- function(dat, year_effects = 1L,
                                cohort_effects = 0L,

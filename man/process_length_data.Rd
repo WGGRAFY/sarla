@@ -17,6 +17,8 @@ process_length_data(spp_data, common_, minimum_n, plot_bool = FALSE, ...)
 observed}
 
 \item{plot_bool}{TRUE or False should plots be made}
+
+\item{...}{Other arguments to pass to \code{\link[=get_std_length]{get_std_length()}}}
 }
 \value{
 the processed length data

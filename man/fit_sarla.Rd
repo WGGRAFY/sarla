@@ -6,6 +6,13 @@
 \usage{
 fit_sarla(data, chains = 4, iter = 2000, ...)
 }
+\arguments{
+\item{chains}{Chains}
+
+\item{iter}{Iterations}
+
+\item{...}{Other arguments to pass to \code{\link[cmdstanr:cmdstan_model]{cmdstanr::cmdstan_model()}}}
+}
 \description{
 Fit a SARLA model
 }
