@@ -3,15 +3,14 @@
 #' observations by year, color coded by age, and one of standardized lengths by
 #' year.
 #'
-#' @param data__ input data frame to plot; must have columns age_years, year,
+#' @param data input data frame to plot; must have columns age_years, year,
 #'   length_cm, and standardl
 #' @param name common name of the species, this will be used in the file name
 #'
 #' @importFrom nmfspalette scale_color_nmfs
-#' @return
 #' @export
-length_plots <- function(data__, name) {
-  processed_summ <- data__ %>%
+length_plots <- function(data, name) {
+  processed_summ <- data %>%
     group_by(age_years, year) %>%
     summarise("mean" = mean(length_cm))
 
@@ -28,7 +27,8 @@ length_plots <- function(data__, name) {
   ggsave(paste("figs/", "mean_laa_", name, ".png", sep = ""), p)
 
   # Set up base ggplot object & theme
-  pbase <- ggplot(data__, aes_string(x = "year", group = "factor(age_years)", color = "factor(age_years)")) +
+  pbase <- ggplot(data, aes_string(x = "year",
+    group = "factor(age_years)", color = "factor(age_years)")) +
     scale_color_nmfs(name = "Age (years)") +
     theme_classic()
 
