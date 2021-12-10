@@ -5,3 +5,13 @@
 .Rdata
 *.rds
 .Rhistory
+*.o
+*.so
+*.html
+*.bak
+*.dll
+vignettes/*.R
+vignettes/*.html
+.DS_Store
+*.tmp
+
