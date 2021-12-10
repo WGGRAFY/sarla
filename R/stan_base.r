@@ -4,7 +4,7 @@
 #' @param ... additional arguments to \code{\link{stan}}
 #'@return returns the stan output
 #'@export
-stan_base <- function(input_data, ...){
+stan_base <- function(input_data, ...){ 
 
   realdat <- list()
   realdat$xaa_observed <- realdat$laa_observed <-input_data
