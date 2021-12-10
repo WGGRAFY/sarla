@@ -1,25 +1,29 @@
+Sys.setenv(MAKEFLAGS = "-j2")
+Sys.setenv("R_REMOTES_NO_ERRORS_FROM_WARNINGS" = "true")
+remotes::install_github("WGGRAFY/sarla", INSTALL_opts = "--no-multiarch", force = TRUE)
+
 library(dplyr)
 library(ggplot2)
 # install.packages("cmdstanr", repos = c("https://mc-stan.org/r-packages/", getOption("repos")))
 library(cmdstanr)
 # cmdstanr::install_cmdstan()
 
-#Set the seed and simulate data, moved sim into its own file
+# Set the seed and simulate data, moved sim into its own file
 set.seed(999)
 dat <- sim(
   Nages = 7, Nyears = 22, sigma_o = 0.2, beta = 0.7,
   gamma_y_sd = 0.2, delta_c_sd = 0, eta_c_sd = 0.2, sigma_p_X0 = 0
 )
 
-#Moved plotting and moving into stan_dat  into a .R function
+# Moved plotting and moving into stan_dat  into a .R function
 stan_dat <- plot_and_fill_data(dat)
 
-#not sure if we need this
-#x <- seq(0, 1, length.out = 300)
-#plot(x, dlnorm(x, log(0.2), 0.5), type = "l")
+# not sure if we need this
+# x <- seq(0, 1, length.out = 300)
+# plot(x, dlnorm(x, log(0.2), 0.5), type = "l")
 # sd(rlnorm(1e6, log(0.2), 0.4))
 
-#Run the model
+# Run the model
 mod <- cmdstan_model("inst/stan/base.stan")
 fit <- mod$sample(
   data = stan_dat,
@@ -34,7 +38,7 @@ fit <- mod$sample(
   max_treedepth = 10
 )
 
-#Look at fitted model
+# Look at fitted model
 fit$summary(variables = c("sigma_p", "sigma_o", "beta", "xaa[1,10]", "xaa[2,10]"))
 fit$cmdstan_diagnose()
 
@@ -65,7 +69,7 @@ xaa <- dat$xaa %>%
   rename(age = Var1, year = Var2, .value = value) %>%
   as_tibble()
 
-#seems like a useful summary to save
+# seems like a useful summary to save
 quantile_summary <- post_xaa %>%
   # filter(y >= stan_dat$Nages) %>%
   # mutate(y = y - stan_dat$Nages + 1) %>%
@@ -76,22 +80,25 @@ quantile_summary <- post_xaa %>%
     med = median(.value)
   )
 
-legend_def <- c("data"="red", "median"="black", "95 quantile"="gray")
+legend_def <- c("data" = "red", "median" = "black", "95 quantile" = "gray")
 quantile_summary %>%
   filter(!(lwr == 0 & upr == 0)) %>%
   ggplot(aes(age, med, ymin = lwr, ymax = upr)) +
   facet_wrap(~year) +
-  geom_line(alpha = 1, aes(colour="red")) +
+  geom_line(alpha = 1, aes(colour = "red")) +
   geom_ribbon(alpha = 0.5) +
   geom_line(
     data = xaa, colour = "red",
     mapping = aes(age, .value), inherit.aes = FALSE
-  ) + theme_minimal() +
-  scale_colour_manual( values=legend_def) +
-  theme(legend.position=c(.90,.05),
-        legend.key.size=unit(0.1,"cm"),
-        legend.title = element_text(size="6"),
-        legend.text = element_text(size="6"))
+  ) +
+  theme_minimal() +
+  scale_colour_manual(values = legend_def) +
+  theme(
+    legend.position = c(.90, .05),
+    legend.key.size = unit(0.1, "cm"),
+    legend.title = element_text(size = "6"),
+    legend.text = element_text(size = "6")
+  )
 
 if (stan_dat$est_cohort_effects) {
   post_delta_c <- tidybayes::gather_draws(fit, delta_c[y])
@@ -114,8 +121,9 @@ if (stan_dat$est_init_effects) {
     group_by(y) %>%
     summarise(upr = quantile(.value, 0.975))
   plot(dat$eta_c, eta_hat$med,
-       xlab="Fitted", ylab="Actual",
-       pch=19, main="Estimated cohort effect")
+    xlab = "Fitted", ylab = "Actual",
+    pch = 19, main = "Estimated cohort effect"
+  )
   segments(dat$eta_c, eta_lwr$lwr, dat$eta_c, eta_upr$upr)
   abline(a = 0, b = 1)
 }
@@ -126,7 +134,8 @@ if (stan_dat$est_year_effects) {
     group_by(y) %>%
     summarise(med = median(.value))
   plot(gamma_hat$med, dat$gamma_y,
-       xlab="Fitted", ylab="Actual",
-       pch=19, main="Estimated year effect")
+    xlab = "Fitted", ylab = "Actual",
+    pch = 19, main = "Estimated year effect"
+  )
   abline(a = 0, b = 1)
 }
