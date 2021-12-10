@@ -1,31 +1,30 @@
 #' Plot the simulated data object and use it to populate the stan input list.
 #'
-#'@param dat is simulated data object
-#'@param year_effects scalar, 1 if year effects are estimated
-#'@param cohort_effects scalar, 1 if cohort effects are estimated
-#'@param init_effects scalar, 1 if initial size effects are estimated
-#'@return stan_dat a list containing needed Stan slots
-#'@export
+#' @param dat is simulated data object
+#' @param year_effects scalar, 1 if year effects are estimated
+#' @param cohort_effects scalar, 1 if cohort effects are estimated
+#' @param init_effects scalar, 1 if initial size effects are estimated
+#' @return stan_dat a list containing needed Stan slots
+#' @export
 plot_and_fill_data <- function(dat, year_effects = 1L,
                                cohort_effects = 0L,
-                               init_effects = 1L, 
-                               plot= FALSE){
+                               init_effects = 1L,
+                               plot = FALSE) {
+  if (plot) {
+    # Plot the observed data
+    par(mfrow = c(1, 1))
+    matplot(dat$xaa_observed, type = "l", lty = 1)
+    matplot(dat$laa_observed, type = "l", lty = 1)
 
-  if (plot ) {
-     #Plot the observed data
-  par(mfrow = c(1, 1))
-  matplot(dat$xaa_observed, type = "l", lty = 1)
-  matplot(dat$laa_observed, type = "l", lty = 1)
 
- 
-  #Plot observed deviations from mean by age and year
-  dat$xaa %>%
-    reshape2::melt(varnames=c("age", "year")) %>%
-    ggplot(aes(year, age, fill = value)) +
-    geom_tile() +
-    scale_fill_gradient2()
+    # Plot observed deviations from mean by age and year
+    dat$xaa %>%
+      reshape2::melt(varnames = c("age", "year")) %>%
+      ggplot(aes(year, age, fill = value)) +
+      geom_tile() +
+      scale_fill_gradient2()
   }
-  #populate stan data
+  # populate stan data
   stan_dat <- list()
   stan_dat$laa <- dat$laa_observed
   stan_dat$Nages <- dat$Nages
@@ -47,8 +46,7 @@ plot_and_fill_data <- function(dat, year_effects = 1L,
   stan_dat$N_eta_c <- stan_dat$Ncohorts
   stan_dat$N_delta_c <- 0L
 
-  stan_dat$n_proc_error <- stan_dat$Ncohorts*stan_dat$Nages
+  stan_dat$n_proc_error <- stan_dat$Ncohorts * stan_dat$Nages
 
   return(stan_dat)
-
 }

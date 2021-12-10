@@ -1,19 +1,18 @@
 #' fit_stan_data
-#'A function that takes the input data and feeds it into the Stan sarla model
+#' A function that takes the input data and feeds it into the Stan sarla model
 #'
 #' @param input_data the stan data to fit
 #' @param ... Other arguments to pass to [plot_and_fill_data()].
 #' @export
-fit_stan_data <- function(input_data, ...){
-
+fit_stan_data <- function(input_data, ...) {
   realdat <- list()
-  realdat$xaa_observed <- realdat$laa_observed <-input_data
+  realdat$xaa_observed <- realdat$laa_observed <- input_data
   realdat$Nages <- nrow(realdat$xaa_observed)
   realdat$Nyears <- ncol(realdat$xaa_observed)
-  realdat$Ncohorts <- realdat$Nages + realdat$Nyears -1
+  realdat$Ncohorts <- realdat$Nages + realdat$Nyears - 1
   stan_dat <- plot_and_fill_data(realdat, ...)
 
-  stan_mod_file <- system.file("inst","stan", "base.stan", package = "sarla")
+  stan_mod_file <- system.file("inst", "stan", "base.stan", package = "sarla")
 
   mod <- cmdstan_model(stan_mod_file)
   fit <- mod$sample(

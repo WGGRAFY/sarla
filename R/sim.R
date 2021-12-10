@@ -5,12 +5,15 @@
 #' @param Nages integer setting the number of ages. 7 by default.
 #' @param Nyears integer setting the number of years. 22 by default.
 #' @param beta double setting the degree of autocorrelation. 0.5 by default.
-#' @param sigma_p_x0 double setting the sd of variation in starting values. Defaults to equivalent to \code{sigma_p}
+#' @param sigma_p_x0 double setting the sd of variation in starting values.
+#'   Defaults to equivalent to \code{sigma_p}
 #' @param gamma_y_sd double setting the sd of year variation. Default is 0.
-#' @param delta_c_sd double setting the sd of cohort effect variation. Defaults to 0.
-#' @param eta_c_sd double setting the sd of the initial size cohort effect. Defaults to 0.
-#'@return list of simulated data
-#'@export
+#' @param delta_c_sd double setting the sd of cohort effect variation. Defaults
+#'   to 0.
+#' @param eta_c_sd double setting the sd of the initial size cohort effect.
+#'   Defaults to 0.
+#' @return list of simulated data
+#' @export
 sim <- function(sigma_p = 0.2, sigma_o = 0.1,
                 Nages = 7, Nyears = 22,
                 beta = 0.5,
