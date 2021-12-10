@@ -34,18 +34,18 @@ length_plots <- function(data__, name) {
 
   # Plot raw length observations by year and age
   p2 <- pbase +
-    geom_point(aes(y = length_cm)) +
+    geom_point(aes_string(y = "length_cm")) +
     labs(y = "Length (cm)", title = "Length by year")
   p2
   ggsave(paste("figs/", "raw_length_", name, ".png", sep = ""), p2)
 
   # Plot standardized lengths by year and age
-  p3 <- pbase + geom_point(aes(y = standardl)) +
+  p3 <- pbase + geom_point(aes_string(y = "standardl")) +
     geom_hline(yintercept = 3, color = nmfs_cols("dk_gray_1")) +
     geom_hline(yintercept = -3, color = nmfs_cols("dk_gray_2")) +
     labs(y = "Standardized length deviation", title = "Standard length deviations")
   p3
   ggsave(paste("figs/", "std_length_", name, ".png", sep = ""), p3)
 
-  return(invisible(pbase))
+  invisible(pbase)
 }

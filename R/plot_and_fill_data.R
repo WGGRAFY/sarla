@@ -23,7 +23,7 @@ plot_and_fill_data <- function(dat, year_effects = 1L,
     # Plot observed deviations from mean by age and year
     dat$xaa %>%
       reshape2::melt(varnames = c("age", "year")) %>%
-      ggplot(aes(year, age, fill = value)) +
+      ggplot(aes_string("year", "age", fill = "value")) +
       geom_tile() +
       scale_fill_gradient2()
   }
