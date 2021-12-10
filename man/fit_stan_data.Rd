@@ -9,6 +9,8 @@ fit_stan_data(input_data, ...)
 }
 \arguments{
 \item{input_data}{the stan data to fit}
+
+\item{...}{Other arguments to pass to \code{\link[=plot_and_fill_data]{plot_and_fill_data()}}.}
 }
 \description{
 fit_stan_data

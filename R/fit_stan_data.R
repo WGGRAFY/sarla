@@ -2,7 +2,7 @@
 #'A function that takes the input data and feeds it into the Stan sarla model
 #'
 #' @param input_data the stan data to fit
-#' @param
+#' @param ... Other arguments to pass to [plot_and_fill_data()].
 #' @export
 fit_stan_data <- function(input_data, ...){
 
