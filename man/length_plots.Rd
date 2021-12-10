@@ -2,13 +2,16 @@
 % Please edit documentation in R/length_plots.R
 \name{length_plots}
 \alias{length_plots}
-\title{Length plots to length-at-age data
-This function creates three plots in the figs/ directory - one of mean length by age across years, one of raw length observations by year, color coded by age, and one of standardized lengths by year.}
+\title{Length plots to length-at-age data This function creates three plots in the
+figs/ directory - one of mean length by age across years, one of raw length
+observations by year, color coded by age, and one of standardized lengths by
+year.}
 \usage{
 length_plots(data__, name)
 }
 \arguments{
-\item{data__}{input data frame to plot; must have columns age_years, year, length_cm, and standardl}
+\item{data__}{input data frame to plot; must have columns age_years, year,
+length_cm, and standardl}
 
 \item{name}{common name of the species, this will be used in the file name}
 }
@@ -16,6 +19,8 @@ length_plots(data__, name)
 
 }
 \description{
-Length plots to length-at-age data
-This function creates three plots in the figs/ directory - one of mean length by age across years, one of raw length observations by year, color coded by age, and one of standardized lengths by year.
+Length plots to length-at-age data This function creates three plots in the
+figs/ directory - one of mean length by age across years, one of raw length
+observations by year, color coded by age, and one of standardized lengths by
+year.
 }

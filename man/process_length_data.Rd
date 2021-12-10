@@ -2,17 +2,19 @@
 % Please edit documentation in R/process_length_data.R
 \name{process_length_data}
 \alias{process_length_data}
-\title{process_length_data
-A function that takes processed length data and standardizes it to calculate the means.}
+\title{Process length_data A function that takes processed length data and
+standardizes it to calculate the means.}
 \usage{
 process_length_data(spp_data, common_, minimum_n, plot_bool = FALSE, ...)
 }
 \arguments{
-\item{spp_data}{a tibble that has, at minimum, the columns \code{age_years}, \code{length_cm},\code{year}}
+\item{spp_data}{a tibble that has, at minimum, the columns \code{age_years},
+\code{length_cm}, \code{year}}
 
 \item{common_}{Common name of the species you are interested in}
 
-\item{minimum_n}{The minimum sample size used to set the maximum age of fish observed}
+\item{minimum_n}{The minimum sample size used to set the maximum age of fish
+observed}
 
 \item{plot_bool}{TRUE or False should plots be made}
 }
@@ -20,6 +22,6 @@ process_length_data(spp_data, common_, minimum_n, plot_bool = FALSE, ...)
 the processed length data
 }
 \description{
-process_length_data
-A function that takes processed length data and standardizes it to calculate the means.
+Process length_data A function that takes processed length data and
+standardizes it to calculate the means.
 }

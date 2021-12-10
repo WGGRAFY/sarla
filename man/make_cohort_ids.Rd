@@ -2,7 +2,8 @@
 % Please edit documentation in R/make_cohort_ids.R
 \name{make_cohort_ids}
 \alias{make_cohort_ids}
-\title{Makes a matrix populated with an id corresponding to the cohort of the observation.}
+\title{Makes a matrix populated with an id corresponding to the cohort of the
+observation.}
 \usage{
 make_cohort_ids(Nages, Nyears)
 }
@@ -15,5 +16,6 @@ make_cohort_ids(Nages, Nyears)
 a matrix with dimensions Nages x Nyears with the cohort ids.
 }
 \description{
-Makes a matrix populated with an id corresponding to the cohort of the observation.
+Makes a matrix populated with an id corresponding to the cohort of the
+observation.
 }
