@@ -1,7 +1,7 @@
 Sys.setenv(MAKEFLAGS = "-j2")
 Sys.setenv("R_REMOTES_NO_ERRORS_FROM_WARNINGS" = "true")
 remotes::install_github("WGGRAFY/sarla", INSTALL_opts = "--no-multiarch", force = TRUE)
-
+library(sarla)
 library(dplyr)
 library(ggplot2)
 # install.packages("cmdstanr", repos = c("https://mc-stan.org/r-packages/", getOption("repos")))
@@ -23,8 +23,12 @@ stan_dat <- plot_and_fill_data(dat)
 # plot(x, dlnorm(x, log(0.2), 0.5), type = "l")
 # sd(rlnorm(1e6, log(0.2), 0.4))
 
+fit <- base_stan(stan_dat)
+
 # Run the model
 mod <- cmdstan_model("inst/stan/base.stan")
+
+
 fit <- mod$sample(
   data = stan_dat,
   # seed = 2,
