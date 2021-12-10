@@ -6,13 +6,6 @@
 #'@export
 stan_base <- function(input_data, ...){ 
 
-  realdat <- list()
-  realdat$xaa_observed <- realdat$laa_observed <-input_data
-  realdat$Nages <- nrow(realdat$xaa_observed)
-  realdat$Nyears <- ncol(realdat$xaa_observed)
-  realdat$Ncohorts <- realdat$Nages + realdat$Nyears -1
-  stan_dat <- plot_and_fill_data(realdat, ...)
-
-  out <- rstan::sampling(stanmodels$base, data = stan_dat, ...)
+  out <- rstan::sampling(sarla:::stanmodels$base, data = input_data, ...)
     return(out)
 }
