@@ -13,3 +13,4 @@ vignettes/*.R
 vignettes/*.html
 .DS_Store
 *.tmp
+^inst/stan/sarla$
