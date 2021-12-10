@@ -16,6 +16,12 @@ NULL
 if (getRversion() >= "2.15.1") utils::globalVariables(c("."))
 if (getRversion() >= "2.15.1") {
   utils::globalVariables(c(
-    "age_years", "year"
+    "age_years",
+    "year",
+    "count",
+    "length_cm",
+    "meanal",
+    "meanl",
+    "sdl"
   ))
 }
