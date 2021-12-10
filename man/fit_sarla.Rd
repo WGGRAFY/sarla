@@ -7,6 +7,8 @@
 fit_sarla(data, chains = 4, iter = 2000, ...)
 }
 \arguments{
+\item{data}{Stan data}
+
 \item{chains}{Chains}
 
 \item{iter}{Iterations}

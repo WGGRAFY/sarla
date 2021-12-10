@@ -1,5 +1,6 @@
 #' Fit a SARLA model
 #'
+#' @param data Stan data
 #' @param chains Chains
 #' @param iter Iterations
 #' @param ... Other arguments to pass to [cmdstanr::cmdstan_model()]
