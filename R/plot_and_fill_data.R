@@ -8,20 +8,23 @@
 #'@export
 plot_and_fill_data <- function(dat, year_effects = 1L,
                                cohort_effects = 0L,
-                               init_effects = 1L){
+                               init_effects = 1L, 
+                               plot= FALSE){
 
-  #Plot the observed data
+  if (plot ) {
+     #Plot the observed data
   par(mfrow = c(1, 1))
   matplot(dat$xaa_observed, type = "l", lty = 1)
   matplot(dat$laa_observed, type = "l", lty = 1)
 
+ 
   #Plot observed deviations from mean by age and year
   dat$xaa %>%
     reshape2::melt(varnames=c("age", "year")) %>%
     ggplot(aes(year, age, fill = value)) +
     geom_tile() +
     scale_fill_gradient2()
-
+  }
   #populate stan data
   stan_dat <- list()
   stan_dat$laa <- dat$laa_observed
