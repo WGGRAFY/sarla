@@ -64,8 +64,8 @@ model {
   pro_error_raw ~ normal(0, sigma_p);
   // pro_error_raw ~ std_normal();
   for (i in 1:Nages){
-    for (j in Nages:Ncohorts){
-      if (laa_obs[i,j])==999){
+    for (j in 2:(Ncohorts-Nages)){
+      if (laa_obs[i,j]==999){
         laa_mis[i,j] ~ normal(xaa[i, j], sigma_o);
       } else {
         laa_obs[i,j] ~ normal(xaa[i, j], sigma_o);
@@ -87,6 +87,8 @@ model {
   }
    if (!est_init_effects) {
     X0[1] ~ normal(0, sigma_p);
+    }
+  }
   }
 }
 generated quantities {
@@ -96,9 +98,9 @@ generated quantities {
     for (y in 1:Nyears) {
       laa_postpred[i, y] = normal_rng(xaa[i, y + (Nages - 1)], sigma_o);
       if(laa_obs[i,y] == 999){
-        log_lik[i, y] = normal_lpdf(laa_mis[i, y] | xaa[i, y + (Nages - 1)], sigma_o);
+        log_lik[i, y] = normal_lpdf(laa_mis[i, y] | xaa[i, y], sigma_o);
       } else{
-        log_lik[i, y] = normal_lpdf(laa_obs[i, y] | xaa[i, y + (Nages - 1)], sigma_o);
+        log_lik[i, y] = normal_lpdf(laa_obs[i, y] | xaa[i, y], sigma_o);
       }
     }
   }
