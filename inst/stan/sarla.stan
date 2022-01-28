@@ -70,6 +70,8 @@ model {
       } else {
         laa_obs[i,j] ~ normal(xaa[i, j], sigma_o);
       }
+    }
+  }
   sigma_p ~ normal(0, 1);
   sigma_o ~ lognormal(sigma_o_prior[1], sigma_o_prior[2]);
   beta ~ std_normal();
@@ -89,8 +91,8 @@ model {
     X0[1] ~ normal(0, sigma_p);
     }
   }
-  }
-}
+
+
 generated quantities {
   matrix[Nages, Nyears] laa_postpred;
   matrix[Nages, Nyears] log_lik;

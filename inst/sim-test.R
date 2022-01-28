@@ -9,7 +9,8 @@ dat <- sarla_sim(
   gamma_y_sd = 0.2, delta_c_sd = 0, eta_c_sd = 0.2, sigma_p_X0 = 0
 )
 
-stan_dat <- plot_and_fill_data(dat)
+stan_dat <- plot_and_fill_data(dat, plot = T)
+names(stan_dat)[1] <- "laa_obs"
 
 fit <- fit_sarla(stan_dat,
   chains = 1,
