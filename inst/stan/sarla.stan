@@ -61,7 +61,7 @@ transformed parameters {
   }
 }
 model {
-  pro_error_raw ~ normal(0.01, sigma_p);
+  pro_error_raw ~ normal(0, sigma_p);
   // pro_error_raw ~ std_normal();
   for (i in 1:Nages){
     for (j in 2:(Ncohorts-Nages)){
