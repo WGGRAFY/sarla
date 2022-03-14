@@ -25,7 +25,6 @@ parameters {
   real<lower=0> eta_c_sd[est_init_effects];
   real<lower=0> delta_c_sd[est_cohort_effects];
   real<lower=0> gamma_y_sd[est_year_effects];
-  real laa_mis[N_mis];
 }
 transformed parameters {
   matrix[Nages, Ncohorts] xaa;
