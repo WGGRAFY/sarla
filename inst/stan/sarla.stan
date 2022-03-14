@@ -38,7 +38,7 @@ transformed parameters {
   vector[N_gamma_y] gamma_y;
   vector[N_eta_c] eta_c;
   xaa = rep_matrix(0, Nages, Ncohorts); // initialize at 0
-  real laa[N];
+  real laa[int N];
   laa[ii_obs] = laa_obs;
   laa[ii_mis] = laa_mis;
 
