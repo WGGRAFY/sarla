@@ -13,8 +13,11 @@ stan_dat <- plot_and_fill_data(dat, plot = T)
 names(stan_dat)[1] <- "laa_obs"
 
 fit <- fit_sarla(stan_dat,
-  chains = 1,
-  iter = 100
+  chains = 4,
+  iter = 2000,
+  parallel_chains = parallel::detectCores(),
+  max_treedepth = 12,
+  adapt_delta = 0.98
 )
 
 # Look at fitted model
@@ -118,3 +121,4 @@ if (stan_dat$est_year_effects) {
   )
   abline(a = 0, b = 1)
 }
+
