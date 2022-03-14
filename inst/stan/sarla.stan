@@ -3,11 +3,7 @@ data {
   int<lower=1> Nyears;
   int<lower=1> Ncohorts;
   int cohort_id[Nages, Ncohorts];
-  int<lower = 0> N_obs;
-  int<lower = 0> N_mis;
-  int<lower = 1, upper = N_obs + N_mis> ii_obs[N_obs];
-  int<lower = 1, upper = N_obs + N_mis> ii_mis[N_mis];
-  real laa_obs[N_obs];
+  matrix[Nages, Nyears] laa_obs;
   real sigma_o_prior[2];
   int<lower=0, upper=1> est_cohort_effects;
   int<lower=0, upper=1> est_year_effects;
@@ -16,9 +12,6 @@ data {
   int<lower=0, upper=Ncohorts> N_gamma_y;
   int<lower=0, upper=Ncohorts> N_delta_c;
   int<lower=0> n_proc_error;
-}
-transformed data {
-   int<lower = 0> N = N_obs + N_mis;
 }
 parameters {
   real<lower=-0.99, upper=0.99> beta;
@@ -40,9 +33,19 @@ transformed parameters {
   vector[N_gamma_y] gamma_y;
   vector[N_eta_c] eta_c;
   xaa = rep_matrix(0, Nages, Ncohorts); // initialize at 0
-  real laa[N];
-  laa[ii_obs] = laa_obs;
-  laa[ii_mis] = laa_mis;
+  matrix[Nages, Nyears] laa;
+  matrix[Nages, Nyears] laa_mis;
+  laa_mis = rep_matrix(0, Nages, Nyears);
+
+  for(i in 1:Nages){
+    for(y in 1:Nyears){
+      if(laa_obs[i,y]===999.0){
+        laa = laa_mis[i,y];
+      } else{
+        laa = laa_obs[i,y];
+      }
+    }
+  }
 
   // non-centered parameters:
   if (est_cohort_effects) delta_c = delta_c_raw * delta_c_sd[1];
@@ -99,7 +102,7 @@ generated quantities {
   for (i in 1:Nages) {
     for (y in 1:Nyears) {
       laa_postpred[i, y] = normal_rng(xaa[i, y + (Nages - 1)], sigma_o);
-      log_lik[i,y] = normal_lpdf(to_matrix(laa, Nages, Nyears)[i,y] | xaa[i,y], sigma_o);
+      log_lik[i,y] = normal_lpdf(laa[i,y] | xaa[i,y], sigma_o);
     }
   }
 
