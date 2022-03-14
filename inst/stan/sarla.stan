@@ -17,7 +17,9 @@ data {
   int<lower=0, upper=Ncohorts> N_delta_c;
   int<lower=0> n_proc_error;
 }
-
+transformed data {
+   int<lower = 0> N = N_obs + N_mis;
+}
 parameters {
   real<lower=-0.99, upper=0.99> beta;
   vector[n_proc_error] pro_error_raw;
@@ -38,7 +40,7 @@ transformed parameters {
   vector[N_gamma_y] gamma_y;
   vector[N_eta_c] eta_c;
   xaa = rep_matrix(0, Nages, Ncohorts); // initialize at 0
-  real laa[int N];
+  real laa[N];
   laa[ii_obs] = laa_obs;
   laa[ii_mis] = laa_mis;
 
