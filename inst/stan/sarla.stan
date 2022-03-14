@@ -3,16 +3,18 @@ data {
   int<lower=1> Nyears;
   int<lower=1> Ncohorts;
   int cohort_id[Nages, Ncohorts];
-  matrix[Nages, Nyears] laa_obs;
+  int<lower = 0> N_obs;
+  int<lower = 0> N_mis;
+  int<lower = 1, upper = N_obs + N_mis> ii_obs[N_obs];
+  int<lower = 1, upper = N_obs + N_mis> ii_mis[N_mis];
+  real laa_obs[N_obs];
   real sigma_o_prior[2];
   int<lower=0, upper=1> est_cohort_effects;
   int<lower=0, upper=1> est_year_effects;
   int<lower=0, upper=1> est_init_effects;
-
   int<lower=0, upper=Ncohorts> N_eta_c;
   int<lower=0, upper=Ncohorts> N_gamma_y;
   int<lower=0, upper=Ncohorts> N_delta_c;
-
   int<lower=0> n_proc_error;
 }
 parameters {
@@ -27,7 +29,10 @@ parameters {
   real<lower=0> eta_c_sd[est_init_effects];
   real<lower=0> delta_c_sd[est_cohort_effects];
   real<lower=0> gamma_y_sd[est_year_effects];
-  matrix[Nages, Nyears] laa_mis;
+  real laa_mis[N_mis];
+}
+transformed data {
+  int<lower = 0> N = N_obs + N_mis;
 }
 transformed parameters {
   matrix[Nages, Ncohorts] xaa;
@@ -35,6 +40,9 @@ transformed parameters {
   vector[N_gamma_y] gamma_y;
   vector[N_eta_c] eta_c;
   xaa = rep_matrix(0, Nages, Ncohorts); // initialize at 0
+  real laa[N];
+  laa[N_obs] = laa_obs;
+  laa[N_mis] = laa_mis;
 
   // non-centered parameters:
   if (est_cohort_effects) delta_c = delta_c_raw * delta_c_sd[1];
@@ -63,15 +71,7 @@ transformed parameters {
 model {
   pro_error_raw ~ normal(0, sigma_p);
   // pro_error_raw ~ std_normal();
-  for (i in 1:Nages){
-    for (j in 2:(Ncohorts-Nages)){
-      if (laa_obs[i,j]==999){
-        laa_mis[i,j] ~ normal(xaa[i, j], sigma_o);
-      } else {
-        laa_obs[i,j] ~ normal(xaa[i, j], sigma_o);
-      }
-    }
-  }
+  to_vector(laa) ~ normal(to_vector(xaa[1:Nages, Nages:Ncohorts]), sigma_o);
   sigma_p ~ normal(0, 1);
   sigma_o ~ lognormal(sigma_o_prior[1], sigma_o_prior[2]);
   beta ~ std_normal();
@@ -99,11 +99,8 @@ generated quantities {
   for (i in 1:Nages) {
     for (y in 1:Nyears) {
       laa_postpred[i, y] = normal_rng(xaa[i, y + (Nages - 1)], sigma_o);
-      if(laa_obs[i,y] == 999){
-        log_lik[i, y] = normal_lpdf(laa_mis[i, y] | xaa[i, y], sigma_o);
-      } else{
-        log_lik[i, y] = normal_lpdf(laa_obs[i, y] | xaa[i, y], sigma_o);
-      }
+
     }
   }
+  to_vector(log_lik) = normal_lpdf(to_vector(laa) | to_vector(xaa), sigma_o);
 }
