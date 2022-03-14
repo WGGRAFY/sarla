@@ -17,9 +17,7 @@ data {
   int<lower=0, upper=Ncohorts> N_delta_c;
   int<lower=0> n_proc_error;
 }
-transformed data {
-  int<lower = 0> N = N_obs + N_mis;
-}
+
 parameters {
   real<lower=-0.99, upper=0.99> beta;
   vector[n_proc_error] pro_error_raw;
@@ -99,8 +97,8 @@ generated quantities {
   for (i in 1:Nages) {
     for (y in 1:Nyears) {
       laa_postpred[i, y] = normal_rng(xaa[i, y + (Nages - 1)], sigma_o);
-
+      log_lik[i,y] = normal_lpdf(to_matrix(laa, Nages, Nyears) | xaa[i,y], sigma_o);
     }
   }
-  to_vector(log_lik) = normal_lpdf(to_vector(laa) | to_vector(xaa), sigma_o);
+
 }
