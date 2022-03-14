@@ -2,9 +2,9 @@ data {
   int<lower=1> Nages;
   int<lower=1> Nyears;
   int<lower=1> Ncohorts;
-  int cohort_id[Nages, Ncohorts];
+  array[Nages, Ncohorts] int cohort_id;
   matrix[Nages, Nyears] laa_obs;
-  real sigma_o_prior[2];
+  array[2] real sigma_o_prior;
   int<lower=0, upper=1> est_cohort_effects;
   int<lower=0, upper=1> est_year_effects;
   int<lower=0, upper=1> est_init_effects;
@@ -16,15 +16,15 @@ data {
 parameters {
   real<lower=-0.99, upper=0.99> beta;
   vector[n_proc_error] pro_error_raw;
-  real X0[1-est_init_effects];
+  array[1-est_init_effects] real X0;
   real<lower=0> sigma_p;
   real<lower=0> sigma_o;
   vector[N_eta_c] eta_c_raw;
   vector[N_gamma_y] gamma_y_raw;
   vector[N_delta_c] delta_c_raw;
-  real<lower=0> eta_c_sd[est_init_effects];
-  real<lower=0> delta_c_sd[est_cohort_effects];
-  real<lower=0> gamma_y_sd[est_year_effects];
+  array[est_init_effects] real<lower=0> eta_c_sd;
+  array[est_cohort_effects] real<lower=0> delta_c_sd;
+  array[est_year_effects] real<lower=0> gamma_y_sd;
 }
 transformed parameters {
   matrix[Nages, Ncohorts] xaa;
