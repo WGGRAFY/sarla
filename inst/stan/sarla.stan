@@ -38,9 +38,9 @@ transformed parameters {
   vector[N_gamma_y] gamma_y;
   vector[N_eta_c] eta_c;
   xaa = rep_matrix(0, Nages, Ncohorts); // initialize at 0
-  vector[N] laa;
-  laa[N_obs] = laa_obs;
-  laa[N_mis] = laa_mis;
+  real laa[N];
+  laa[ii_obs] = laa_obs;
+  laa[ii_mis] = laa_mis;
 
   // non-centered parameters:
   if (est_cohort_effects) delta_c = delta_c_raw * delta_c_sd[1];
