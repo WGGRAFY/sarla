@@ -17,6 +17,9 @@ data {
   int<lower=0, upper=Ncohorts> N_delta_c;
   int<lower=0> n_proc_error;
 }
+transformed data {
+  int<lower = 0> N = N_obs + N_mis;
+}
 parameters {
   real<lower=-0.99, upper=0.99> beta;
   vector[n_proc_error] pro_error_raw;
@@ -30,9 +33,6 @@ parameters {
   real<lower=0> delta_c_sd[est_cohort_effects];
   real<lower=0> gamma_y_sd[est_year_effects];
   real laa_mis[N_mis];
-}
-transformed data {
-  int<lower = 0> N = N_obs + N_mis;
 }
 transformed parameters {
   matrix[Nages, Ncohorts] xaa;
