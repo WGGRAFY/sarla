@@ -99,7 +99,7 @@ generated quantities {
   for (i in 1:Nages) {
     for (y in 1:Nyears) {
       laa_postpred[i, y] = normal_rng(xaa[i, y + (Nages - 1)], sigma_o);
-      log_lik[i,y] = normal_lpdf(to_matrix(laa, Nages, Nyears) | xaa[i,y], sigma_o);
+      log_lik[i,y] = normal_lpdf(to_matrix(laa, Nages, Nyears)[i,y] | xaa[i,y], sigma_o);
     }
   }
 
