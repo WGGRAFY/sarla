@@ -39,9 +39,9 @@ transformed parameters {
   for(i in 1:Nages){
     for(y in 1:Nyears){
       if(laa_obs[i,y]==999.0){
-        laa = laa_mis[i,y];
+        laa[i, y] = laa_mis[i, y];
       } else{
-        laa = laa_obs[i,y];
+        laa[i, y] = laa_obs[i, y];
       }
     }
   }
