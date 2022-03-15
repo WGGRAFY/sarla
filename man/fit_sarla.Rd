@@ -4,7 +4,7 @@
 \alias{fit_sarla}
 \title{Fit a SARLA model}
 \usage{
-fit_sarla(data, chains = 4, iter = 2000, ...)
+fit_sarla(data, chains = 4, iter = 2000, adapt_delta = 0.95, ...)
 }
 \arguments{
 \item{data}{Stan data}
@@ -13,7 +13,9 @@ fit_sarla(data, chains = 4, iter = 2000, ...)
 
 \item{iter}{Iterations}
 
-\item{...}{Other arguments to pass to \code{\link[cmdstanr:cmdstan_model]{cmdstanr::cmdstan_model()}}}
+\item{adapt_delta}{Adapt delta argument for sampling}
+
+\item{...}{Other arguments to pass to \code{\link[cmdstanr:cmdstan_model]{cmdstanr::cmdstan_model()}}. See the \verb{$sampling()} method link from \code{\link[cmdstanr:CmdStanModel]{cmdstanr::CmdStanModel()}}.}
 }
 \description{
 Fit a SARLA model

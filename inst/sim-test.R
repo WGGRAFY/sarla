@@ -1,5 +1,5 @@
-# library(sarla)
-devtools::load_all()
+library(sarla)
+# devtools::load_all()
 library(dplyr)
 library(ggplot2)
 
@@ -9,11 +9,15 @@ dat <- sarla_sim(
   gamma_y_sd = 0.2, delta_c_sd = 0, eta_c_sd = 0.2, sigma_p_X0 = 0
 )
 
-stan_dat <- plot_and_fill_data(dat)
+stan_dat <- plot_and_fill_data(dat, plot = T)
+names(stan_dat)[1] <- "laa_obs"
 
 fit <- fit_sarla(stan_dat,
   chains = 1,
-  iter = 100
+  iter = 200,
+  # parallel_chains = parallel::detectCores(),
+  max_treedepth = 12,
+  adapt_delta = 0.98
 )
 
 # Look at fitted model
@@ -117,3 +121,4 @@ if (stan_dat$est_year_effects) {
   )
   abline(a = 0, b = 1)
 }
+
