@@ -1,5 +1,5 @@
-# library(sarla)
-devtools::load_all()
+library(sarla)
+# devtools::load_all()
 library(dplyr)
 library(ggplot2)
 
@@ -13,9 +13,9 @@ stan_dat <- plot_and_fill_data(dat, plot = T)
 names(stan_dat)[1] <- "laa_obs"
 
 fit <- fit_sarla(stan_dat,
-  chains = 4,
-  iter = 2000,
-  parallel_chains = parallel::detectCores(),
+  chains = 1,
+  iter = 200,
+  # parallel_chains = parallel::detectCores(),
   max_treedepth = 12,
   adapt_delta = 0.98
 )
