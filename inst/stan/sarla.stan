@@ -111,6 +111,6 @@ generated quantities {
       log_lik[i,y] = normal_lpdf(laa[i,y] | xaa[i,y], sigma_o);
     }
   }
-  log_lik_vector = to_vector(log_lik)
+  log_lik_vector = to_vector(log_lik);
 
 }
