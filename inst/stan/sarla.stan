@@ -102,15 +102,14 @@ model {
 
 generated quantities {
   matrix[Nages, Nyears] laa_postpred;
-  matrix[Nages, Nyears] log_lik;
-  vector[Nages*Nyears] log_lik_vector;
+  vector[Nages*Nyears] log_lik;
 
   for (i in 1:Nages) {
     for (y in 1:Nyears) {
       laa_postpred[i, y] = normal_rng(xaa[i, y + (Nages - 1)], sigma_o);
-      log_lik[i,y] = normal_lpdf(laa[i,y] | xaa[i,y], sigma_o);
+      int index_iy = y*Nages + i;
+      log_lik[index_iy] = normal_lpdf(laa[i,y] | xaa[i,y], sigma_o);
     }
   }
-  log_lik_vector = to_vector(log_lik);
 
 }
