@@ -13,7 +13,7 @@ data {
   int<lower=0, upper=Ncohorts> N_gamma_y;
   int<lower=0, upper=Ncohorts> N_delta_c;
   int<lower=0> n_proc_error;
-  array[Nyears] real year_effect_cov;
+  array[Ncohorts] real year_effect_cov;
 }
 parameters {
   real<lower=-0.99, upper=0.99> beta;
