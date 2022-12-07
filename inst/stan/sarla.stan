@@ -13,9 +13,11 @@ data {
   int<lower=0, upper=Ncohorts> N_gamma_y;
   int<lower=0, upper=Ncohorts> N_delta_c;
   int<lower=0> n_proc_error;
+  array[Nyears] year_effect_cov;
 }
 parameters {
   real<lower=-0.99, upper=0.99> beta;
+  real<lower=-0.99, upper=0.99> beta_y; //coefficient for year_effect_cov
   array[1-est_init_effects] real X0;
   real<lower=0> sigma_p;
   real<lower=0> sigma_o;
@@ -68,7 +70,7 @@ transformed parameters {
           // xaa[i,y] = beta * xaa[i-1, y-1] + pro_error_raw[ii] * sigma_p;
           xaa[i,y] = beta * xaa[i-1, y-1] + pro_error_raw[ii] * sigma_p;
           if (est_cohort_effects) xaa[i,y] = xaa[i,y] + delta_c[cohort_id[i,y]];
-          if (est_year_effects) xaa[i,y] = xaa[i,y] + gamma_y[y];
+          if (est_year_effects) xaa[i,y] = xaa[i,y] + gamma_y[y] + beta_y * year_effect_cov[y];
         }
       }
     }
@@ -82,6 +84,7 @@ model {
   sigma_p ~ lognormal(sigma_p_prior[1], sigma_p_prior[2]);
   sigma_o ~ lognormal(sigma_o_prior[1], sigma_o_prior[2]);
   beta ~ std_normal();
+  beta_y ~ std_normal();
   if (est_year_effects) {
     gamma_y_raw ~ std_normal();
     gamma_y_sd ~ normal(0, 1);
