@@ -117,7 +117,7 @@ model {
      X0[1] ~ normal(0, sigma_p);
    }
    if(inc_cov) {
-     for(i in 1:(Ncohorts-Ncov){
+     for(i in 1:(Ncohorts-Ncov)){
        temp[i] ~ normal(mu_c, sigma_c);
      }
    }
