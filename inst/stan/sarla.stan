@@ -118,7 +118,7 @@ model {
    }
    if(inc_cov) {
      for(i in 1:(Ncohorts-Ncov)){
-       temp[i] ~ normal(mu_c, sigma_c);
+       temp[i] ~ normal(mean_c, sigma_c);
      }
    }
 }
