@@ -67,8 +67,8 @@ transformed parameters {
     if (est_init_effects) xaa[1, y] = eta_c[y];
   }
   if(inc_cov){
-    for(i in (Ncohorts-Ncov):Ncohorts){
-      temp[i] = cohort_effect_cov[i-(Ncohorts-Ncov-1)];
+    for(i in (Ncohorts-Ncov+1):Ncohorts){
+      temp[i] = cohort_effect_cov[i-(Ncohorts-Ncov)];
     }
   }
   {
