@@ -72,7 +72,7 @@ transformed parameters {
     }
   }
   {
-    int ii
+    int ii;
     ii = 0;
     for (y in 2:Ncohorts) {
       for (i in 2:Nages) {
