@@ -2,6 +2,7 @@ data {
   int<lower=1> Nages;
   int<lower=1> Nyears;
   int<lower=1> Ncohorts;
+  int<lower=1> Ncov;
   array[Nages, Ncohorts] int cohort_id;
   matrix[Nages, Nyears] laa_obs;
   array[2] real sigma_o_prior;
@@ -9,18 +10,22 @@ data {
   int<lower=0, upper=1> est_cohort_effects;
   int<lower=0, upper=1> est_year_effects;
   int<lower=0, upper=1> est_init_effects;
+  int<lower=0, upper=1> inc_cov;
   int<lower=0, upper=Ncohorts> N_eta_c;
   int<lower=0, upper=Ncohorts> N_gamma_y;
   int<lower=0, upper=Ncohorts> N_delta_c;
   int<lower=0> n_proc_error;
-  array[Ncohorts] real year_effect_cov;
+  array[Ncov] real cohort_effect_cov;
 }
+
 parameters {
   real<lower=-0.99, upper=0.99> beta;
-  real<lower=-0.99, upper=0.99> beta_y; //coefficient for year_effect_cov
+  real<lower=-0.99, upper=0.99> beta_e; //coefficient for cohort_effect_cov
   array[1-est_init_effects] real X0;
   real<lower=0> sigma_p;
   real<lower=0> sigma_o;
+  real<lower=0> sigma_c;
+  real<lower=0> mean_c;
   vector[N_eta_c] eta_c_raw;
   vector[N_gamma_y] gamma_y_raw;
   vector[N_delta_c] delta_c_raw;
@@ -36,6 +41,7 @@ transformed parameters {
   vector[N_delta_c] delta_c;
   vector[N_gamma_y] gamma_y;
   vector[N_eta_c] eta_c;
+  vector[Ncohorts] temp; //vector of temperatures
   xaa = rep_matrix(0, Nages, Ncohorts); // initialize at 0
   matrix[Nages, Nyears] laa;
   matrix[Nages, Nyears] laa_mis;
@@ -60,8 +66,13 @@ transformed parameters {
     if (!est_init_effects) xaa[1, y] = X0[1];
     if (est_init_effects) xaa[1, y] = eta_c[y];
   }
+  if(inc_cov){
+    for(i in (Ncohorts-Ncov):Ncohorts){
+      temp[i] = cohort_effect_cov[i-(Ncohorts-Ncov-1)];
+    }
+  }
   {
-    int ii;
+    int ii
     ii = 0;
     for (y in 2:Ncohorts) {
       for (i in 2:Nages) {
@@ -69,8 +80,11 @@ transformed parameters {
           ii = ii + 1;
           // xaa[i,y] = beta * xaa[i-1, y-1] + pro_error_raw[ii] * sigma_p;
           xaa[i,y] = beta * xaa[i-1, y-1] + pro_error_raw[ii] * sigma_p;
-          if (est_cohort_effects) xaa[i,y] = xaa[i,y] + delta_c[cohort_id[i,y]];
-          if (est_year_effects) xaa[i,y] = xaa[i,y] + gamma_y[y] + beta_y * year_effect_cov[y];
+          if (est_cohort_effects) xaa[i,y] = xaa[i,y] + delta_c[cohort_id[i,y]]
+            if (inc_cov){
+              xaa[i,y] = xaa[i,y] + beta_e * temp[cohort_id[i,y]];
+            }
+          if (est_year_effects) xaa[i,y] = xaa[i,y] + gamma_y[y];
         }
       }
     }
@@ -84,7 +98,7 @@ model {
   sigma_p ~ lognormal(sigma_p_prior[1], sigma_p_prior[2]);
   sigma_o ~ lognormal(sigma_o_prior[1], sigma_o_prior[2]);
   beta ~ std_normal();
-  beta_y ~ std_normal();
+  beta_e ~ std_normal();
   if (est_year_effects) {
     gamma_y_raw ~ std_normal();
     gamma_y_sd ~ normal(0, 1);
@@ -99,6 +113,11 @@ model {
   }
    if (!est_init_effects) {
      X0[1] ~ normal(0, sigma_p);
+   }
+   if(inc_cov) {
+     for(i in 1:(Ncohorts-Ncov){
+       temp[i] ~ normal(mu_c, sigma_c);
+     }
    }
 }
 
