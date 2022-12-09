@@ -83,6 +83,7 @@ transformed parameters {
           if (est_cohort_effects){
             xaa[i,y] = xaa[i,y] + delta_c[cohort_id[i,y]];
             if (inc_cov){
+              print("temp[", cohort_id[i,y], "] = ", temp[cohort_id[i,y]]);
               xaa[i,y] = xaa[i,y] + beta_e * temp[cohort_id[i,y]];
             }
           }
