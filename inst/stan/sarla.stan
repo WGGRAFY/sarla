@@ -3,6 +3,8 @@ data {
   int<lower=1> Nyears;
   int<lower=1> Ncohorts;
   int<lower=1> Ncov;
+  real<lower=0> sigma_c;
+  real<lower=0> mean_c;
   array[Nages, Ncohorts] int cohort_id;
   matrix[Nages, Nyears] laa_obs;
   array[2] real sigma_o_prior;
@@ -24,8 +26,6 @@ parameters {
   array[1-est_init_effects] real X0;
   real<lower=0> sigma_p;
   real<lower=0> sigma_o;
-  real<lower=0> sigma_c;
-  real<lower=0> mean_c;
   vector[N_eta_c] eta_c_raw;
   vector[N_gamma_y] gamma_y_raw;
   vector[N_delta_c] delta_c_raw;
@@ -83,7 +83,6 @@ transformed parameters {
           if (est_cohort_effects){
             xaa[i,y] = xaa[i,y] + delta_c[cohort_id[i,y]];
             if (inc_cov){
-              print("temp[", cohort_id[i,y], "] = ", temp[cohort_id[i,y]]);
               xaa[i,y] = xaa[i,y] + beta_e * temp[cohort_id[i,y]];
             }
           }
