@@ -66,7 +66,7 @@ transformed parameters {
   }
   if(inc_cov){
   for(i in 1:(Ncohorts-Ncov)){
-       temp[i] =0;
+       temp[i] = mean(cohort_effect_cov);
   }
     for(i in (Ncohorts-Ncov+1):Ncohorts){
       temp[i] = cohort_effect_cov[i-(Ncohorts-Ncov)];
