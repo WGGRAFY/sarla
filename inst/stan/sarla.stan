@@ -3,8 +3,6 @@ data {
   int<lower=1> Nyears;
   int<lower=1> Ncohorts;
   int<lower=1> Ncov;
-  real<lower=0> sigma_c;
-  real<lower=0> mean_c;
   array[Nages, Ncohorts] int cohort_id;
   matrix[Nages, Nyears] laa_obs;
   array[2] real sigma_o_prior;
@@ -67,6 +65,9 @@ transformed parameters {
     if (est_init_effects) xaa[1, y] = eta_c[y];
   }
   if(inc_cov){
+  for(i in 1:(Ncohorts-Ncov)){
+       temp[i] =0;
+  }
     for(i in (Ncohorts-Ncov+1):Ncohorts){
       temp[i] = cohort_effect_cov[i-(Ncohorts-Ncov)];
     }
@@ -116,11 +117,7 @@ model {
    if (!est_init_effects) {
      X0[1] ~ normal(0, sigma_p);
    }
-   if(inc_cov) {
-     for(i in 1:(Ncohorts-Ncov)){
-       temp[i] ~ normal(mean_c, sigma_c);
-     }
-   }
+
 }
 
 
