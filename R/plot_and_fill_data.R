@@ -50,7 +50,7 @@ plot_and_fill_data <- function(dat, year_effects = 1L,
   stan_dat$N_eta_c <- stan_dat$Ncohorts
   stan_dat$N_delta_c <- stan_dat$Ncohorts
   stan_dat$cohort_effect_cov <- dat$cohort_effect_cov
-  stan_dat$Ncov <- length(dat$cohort_effect_cov)
+  stan_dat$N_cov <- length(dat$cohort_effect_cov)
 
   stan_dat$n_proc_error <- stan_dat$Ncohorts * stan_dat$Nages
 
