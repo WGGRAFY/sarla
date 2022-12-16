@@ -55,11 +55,13 @@ transformed parameters {
   if (est_cov_effects){
       for(i in 1:(Ncohorts-N_cov)){
        temp[i] = mean(cohort_effect_cov);
+           lambda_c[i] = beta_e * temp[i] + lambda_c_raw[i] * lambda_c_sd[1];
   }
     for(i in (Ncohorts-N_cov+1):Ncohorts){
       temp[i] = cohort_effect_cov[i-(Ncohorts-N_cov)];
+          lambda_c[i] = beta_e * temp[i] + lambda_c_raw[i] * lambda_c_sd[1];
     }
-    lambda_c = beta_e * temp + lambda_c_raw* lambda_c_sd[1];
+
   }
 
   for (y in 1:Ncohorts) {
