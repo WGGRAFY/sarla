@@ -44,7 +44,7 @@ plot_and_fill_data <- function(dat, year_effects = 1L,
   stan_dat$est_year_effects <- year_effects
   stan_dat$est_cohort_effects <- cohort_effects
   stan_dat$est_init_effects <- init_effects
-  stan_dat$inc_cov <- ifelse(length(dat$cohort_effect_cov)>0,1L,0L)
+  stan_dat$est_cov_effects <- ifelse(length(dat$cohort_effect_cov)>0,1L,0L)
 
   stan_dat$N_gamma_y <- stan_dat$Ncohorts
   stan_dat$N_eta_c <- stan_dat$Ncohorts
