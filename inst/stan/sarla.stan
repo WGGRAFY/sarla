@@ -88,7 +88,7 @@ transformed parameters {
           xaa[i,y] = beta * xaa[i-1, y-1] + pro_error_raw[ii] * sigma_p;
           if (est_cohort_effects){
             xaa[i,y] = xaa[i,y] + delta_c[cohort_id[i,y]];
-            if (inc_cov){
+            if (est_cov_effects){
               xaa[i,y] = xaa[i,y] + lambda_c[cohort_id[i,y]];
             }
           }
