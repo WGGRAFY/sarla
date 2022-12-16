@@ -48,32 +48,33 @@ transformed parameters {
   matrix[Nages, Nyears] laa_mis;
   laa_mis = rep_matrix(0, Nages, Nyears);
 
-  for(i in 1:Nages){
+  // non-centered parameters:
+  if (est_cohort_effects) delta_c = delta_c_raw * delta_c_sd[1];
+  if (est_init_effects) eta_c = eta_c_raw * eta_c_sd[1];
+  if (est_year_effects) gamma_y = gamma_y_raw * gamma_y_sd[1];
+
+  for (y in 1:Ncohorts) {
+    if (!est_init_effects) xaa[1, y] = X0[1];
+    if (est_init_effects) xaa[1, y] = eta_c[y];
+  }
+  if(est_cov_effects){
+  for(i in 1:(Ncohorts-N_cov)){
+       temp[i] = mean(cohort_effect_cov);
+  }
+    for(i in (Ncohorts-N_cov+1):Ncohorts){
+      temp[i] = cohort_effect_cov[i-(Ncohorts-N_cov)];
+    }
+
+  }
+    for(i in 1:Nages){
     for(y in 1:Nyears){
       if (laa_obs[i,y]==999.0){
         laa[i, y] = laa_mis[i, y];
       } else {
         laa[i, y] = laa_obs[i, y];
       }
-    }
-  }
-
-  // non-centered parameters:
-  if (est_cohort_effects) delta_c = delta_c_raw * delta_c_sd[1];
-  if (est_init_effects) eta_c = eta_c_raw * eta_c_sd[1];
-  if (est_year_effects) gamma_y = gamma_y_raw * gamma_y_sd[1];
-  if (est_cov_effects) lambda_c = beta_e * temp[cohort_id[i,y]] + lambda_c_raw * lambda_c_sd[1];
-
-  for (y in 1:Ncohorts) {
-    if (!est_init_effects) xaa[1, y] = X0[1];
-    if (est_init_effects) xaa[1, y] = eta_c[y];
-  }
-  if(inc_cov){
-  for(i in 1:(Ncohorts-N_cov)){
-       temp[i] = mean(cohort_effect_cov);
-  }
-    for(i in (Ncohorts-N_cov+1):Ncohorts){
-      temp[i] = cohort_effect_cov[i-(Ncohorts-N_cov)];
+       lambda_c[cohort_id[i,y]] = beta_e * temp[cohort_id[i,y]] +
+            lambda_c_raw[cohort_id[i,y]] * lambda_c_sd[1];
     }
   }
   {
