@@ -58,7 +58,7 @@ transformed parameters {
            lambda_c[i] = beta_e * temp[i] + lambda_c_raw[i] * lambda_c_sd[1];
   }
     for(i in (Ncohorts-N_cov+1):Ncohorts){
-      print(i)
+      print(i);
       temp[i] = cohort_effect_cov[i-(Ncohorts-N_cov)];
           lambda_c[i] = beta_e * temp[i] + lambda_c_raw[i] * lambda_c_sd[1];
     }
