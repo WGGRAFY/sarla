@@ -27,7 +27,7 @@ parameters {
   vector[N_eta_c] eta_c_raw;
   vector[N_gamma_y] gamma_y_raw;
   vector[N_delta_c] delta_c_raw;
-  vector[N_cov] lambda_c_raw;
+  vector[Ncohorts] lambda_c_raw;
 
   vector[n_proc_error] pro_error_raw;
 
@@ -41,7 +41,7 @@ transformed parameters {
   vector[N_delta_c] delta_c;
   vector[N_gamma_y] gamma_y;
   vector[N_eta_c] eta_c;
-  vector[N_cov] lambda_c;
+  vector[Ncohorts] lambda_c;
   vector[Ncohorts] temp; //vector of temperatures
   xaa = rep_matrix(0, Nages, Ncohorts); // initialize at 0
   matrix[Nages, Nyears] laa;
@@ -55,12 +55,12 @@ transformed parameters {
   if (est_cov_effects){
       for(i in 1:(Ncohorts-N_cov)){
        temp[i] = mean(cohort_effect_cov);
-           lambda_c[i] = beta_e * temp[i] + lambda_c_raw[i] * lambda_c_sd[1];
+      lambda_c[i] = beta_e * temp[i] + lambda_c_raw[i] * lambda_c_sd[1];
   }
     for(i in (Ncohorts-N_cov+1):Ncohorts){
       print(i);
       temp[i] = cohort_effect_cov[i-(Ncohorts-N_cov)];
-          lambda_c[i] = beta_e * temp[i] + lambda_c_raw[i] * lambda_c_sd[1];
+      lambda_c[i] = beta_e * temp[i] + lambda_c_raw[i] * lambda_c_sd[1];
     }
 
   }
