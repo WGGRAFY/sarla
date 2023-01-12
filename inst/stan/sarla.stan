@@ -81,7 +81,6 @@ transformed parameters {
     ii = 0;
     for (y in 2:Ncohorts) {
       for (i in 2:Nages) {
-        xaa[i, 1] = X0[i];
         if (cohort_id[i-1, y-1] != 999) { // 999 = magic number for NA
           ii = ii + 1;
           // xaa[i,y] = beta * xaa[i-1, y-1] + pro_error_raw[ii] * sigma_p;
