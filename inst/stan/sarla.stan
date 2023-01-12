@@ -134,9 +134,6 @@ generated quantities {
   matrix[Nages, Nyears] log_lik;
   for (i in 1:Nages) {
     for (y in 1:Nyears) {
-      print(i);
-      print(y);
-      print(xaa[i,y]);
       laa_postpred[i, y] = normal_rng(xaa[i, y + (Nages - 1)], sigma_o);
       log_lik[i,y] = normal_lpdf(laa[i,y] | xaa[i,y], sigma_o);
     }
