@@ -56,7 +56,7 @@ transformed parameters {
       lambda_c[i] = 0;
     }
     for(i in (Ncohorts-N_cov+1):Ncohorts){
-      lambda_c[i-(Ncohorts-N_cov)] = beta_e * cohort_effect_cov[i-(Ncohorts-N_cov)] +
+      lambda_c[i] = beta_e * cohort_effect_cov[i-(Ncohorts-N_cov)] +
       lambda_c_raw[i-(Ncohorts-N_cov)] * lambda_c_sd[1];
     }
 
@@ -134,6 +134,9 @@ generated quantities {
   matrix[Nages, Nyears] log_lik;
   for (i in 1:Nages) {
     for (y in 1:Nyears) {
+      print(i);
+      print(y);
+      print(xaa[i,y]);
       laa_postpred[i, y] = normal_rng(xaa[i, y + (Nages - 1)], sigma_o);
       log_lik[i,y] = normal_lpdf(laa[i,y] | xaa[i,y], sigma_o);
     }
