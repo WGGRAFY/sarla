@@ -41,7 +41,7 @@ transformed parameters {
   vector[N_delta_c] delta_c;
   vector[N_gamma_y] gamma_y;
   vector[N_eta_c] eta_c;
-  vector[N_cov] lambda_c;
+  vector[Ncohorts] lambda_c;
   xaa = rep_matrix(0, Nages, Ncohorts); // initialize at 0
   matrix[Nages, Nyears] laa;
   matrix[Nages, Nyears] laa_mis;
@@ -52,6 +52,9 @@ transformed parameters {
   if (est_init_effects) eta_c = eta_c_raw * eta_c_sd[1];
   if (est_year_effects) gamma_y = gamma_y_raw * gamma_y_sd[1];
   if (est_cov_effects){
+    for(i in 1:(Ncohorts-N_cov+1)){
+      lambda_c[i] = 0;
+    }
     for(i in (Ncohorts-N_cov+1):Ncohorts){
       lambda_c[i-(Ncohorts-N_cov)] = beta_e * cohort_effect_cov[i-(Ncohorts-N_cov)] +
       lambda_c_raw[i-(Ncohorts-N_cov)] * lambda_c_sd[1];
