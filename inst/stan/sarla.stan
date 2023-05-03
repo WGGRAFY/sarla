@@ -137,8 +137,8 @@ model {
      X0[1] ~ normal(0, sigma_p);
    }
    if(est_cov_effects) {
-     lambda_c_raw ~ std_normal();
-     lambda_c_sd ~ normal(0,1);
+     lambda_raw ~ std_normal();
+     lambda_sd ~ normal(0,1);
    }
 
 }
