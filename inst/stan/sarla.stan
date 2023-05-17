@@ -42,7 +42,7 @@ transformed parameters {
   vector[N_gamma_y] gamma_y;
   vector[N_eta_c] eta_c;
   vector[Ncohorts] lambda_c;
-  vector[Nyears] lambda_y;
+  vector[Ncohorts] lambda_y;
   xaa = rep_matrix(0, Nages, Ncohorts); // initialize at 0
   matrix[Nages, Nyears] laa;
   matrix[Nages, Nyears] laa_mis;
