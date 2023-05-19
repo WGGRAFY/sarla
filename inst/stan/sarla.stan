@@ -114,11 +114,12 @@ transformed parameters {
 }
 model {
   pro_error_raw ~ normal(0, sigma_p);
+  
+  sigma_p ~ lognormal(sigma_p_prior[1], sigma_p_prior[2]);
+  sigma_o ~ invgamma(sigma_o_prior[1], sigma_o_prior[2]);
   // pro_error_raw ~ std_normal();
   to_vector(laa) ~ normal(to_vector(xaa[1:Nages, Nages:Ncohorts]), sigma_o);
   // sigma_p ~ normal(0, 1);
-  sigma_p ~ lognormal(sigma_p_prior[1], sigma_p_prior[2]);
-  sigma_o ~ lognormal(sigma_o_prior[1], sigma_o_prior[2]);
   beta ~ std_normal();
   beta_e ~ std_normal();
   if (est_year_effects) {
