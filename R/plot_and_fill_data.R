@@ -39,7 +39,7 @@ plot_and_fill_data <- function(dat, year_effects = 1L,
   )
   stan_dat$cohort_id[is.na(stan_dat$cohort_id)] <- 999L # magic number
 
-  stan_dat$sigma_o_prior <- c(5, 5)
+  stan_dat$sigma_o_prior <- c(1, 1)
 
   stan_dat$est_year_effects <- year_effects
   stan_dat$est_cohort_effects <- cohort_effects
