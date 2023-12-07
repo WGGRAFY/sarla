@@ -3,7 +3,7 @@ State space autoregressive length-at-age model
 ---
 
 ## installing in `R`
-You can install the `sarla` package from Github. The main branch right now works with a full matrix of data while we are adding support for missing data on the `missingdata` branch.
+You can install the `sarla` package from Github. You will need to install the `CmdStanR` package first using these [instructions](https://mc-stan.org/cmdstanr/). The main branch right now works with a full matrix of data while we are adding support for missing data on the `missingdata` branch.
 
 ```{r}
 remotes::install_github("WGGRAFY/sarla")
