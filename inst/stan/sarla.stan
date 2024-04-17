@@ -55,6 +55,8 @@ transformed parameters {
       gamma_y = gamma_y_raw * gamma_y_sd[1];
     if (est_cov_effects){
       for(i in 2:Nyears){
+        print("cov effect:", i-1, " ", cov_effect[i-1]);
+        print("lambda_y:", i, " ", lambda_y[i]);
         lambda_y[i] = beta_e * cov_effect[i-1] + lambda_raw[i]*lambda_sd[1];
       }
     }
@@ -95,7 +97,6 @@ transformed parameters {
           ii = ii + 1;
           // xaa[i,y] = beta * xaa[i-1, y-1] + pro_error_raw[ii] * sigma_p;
           xaa[i,y] = beta * xaa[i-1, y-1] + pro_error_raw[ii] * sigma_p;
-          print(xaa[i,y]);
           if (est_cohort_effects){
             xaa[i,y] = xaa[i,y] + delta_c[cohort_id[i,y]];
             if (est_cov_effects){
