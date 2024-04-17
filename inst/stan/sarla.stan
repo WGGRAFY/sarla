@@ -54,8 +54,8 @@ transformed parameters {
   if (est_year_effects){
       gamma_y = gamma_y_raw * gamma_y_sd[1];
     if (est_cov_effects){
+      lambda_y[1] = 0;
       for(i in 2:Nyears){
-        print("cov effect:", i-1, " ", cov_effect[i-1]);
         print("lambda_y:", i, " ", lambda_y[i]);
         lambda_y[i] = beta_e * cov_effect[i-1] + lambda_raw[i]*lambda_sd[1];
       }
