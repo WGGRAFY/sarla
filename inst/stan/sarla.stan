@@ -28,7 +28,7 @@ parameters {
   vector[N_gamma_y] gamma_y_raw;
   vector[N_delta_c] delta_c_raw;
   vector[N_cov] lambda_raw;
-
+  matrix[Nages, Nyears] laa_mis;
   vector[n_proc_error] pro_error_raw;
 
   array[est_init_effects] real<lower=0> eta_c_sd;
@@ -45,19 +45,19 @@ transformed parameters {
   vector[Ncohorts] lambda_y;
   xaa = rep_matrix(0, Nages, Ncohorts); // initialize at 0
   matrix[Nages, Nyears] laa;
-  matrix[Nages, Nyears] laa_mis;
-  laa_mis = rep_matrix(0, Nages, Nyears);
 
   // non-centered parameters:
-
   if (est_init_effects) eta_c = eta_c_raw * eta_c_sd[1];
   if (est_year_effects){
       gamma_y = gamma_y_raw * gamma_y_sd[1];
     if (est_cov_effects){
       lambda_y[1] = 0;
-      for(i in 2:Nyears){
-        print("lambda_y:", i, " ", lambda_y[i]);
+      for(i in 2:N_cov){
         lambda_y[i] = beta_e * cov_effect[i-1] + lambda_raw[i]*lambda_sd[1];
+
+      }
+      for(i in (N_cov+1):Ncohorts){
+        lambda_y[i] = 0;
       }
     }
   }
@@ -120,6 +120,7 @@ model {
   sigma_p ~ lognormal(sigma_p_prior[1], sigma_p_prior[2]);
   sigma_o ~ lognormal(sigma_o_prior[1], sigma_o_prior[2]);
   // pro_error_raw ~ std_normal();
+  to_vector(laa_mis) ~ normal(0, sigma_o);
   to_vector(laa) ~ normal(to_vector(xaa[1:Nages, Nages:Ncohorts]), sigma_o);
   // sigma_p ~ normal(0, 1);
   beta ~ std_normal();
