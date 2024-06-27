@@ -4,37 +4,35 @@ data {
   int<lower=1> Ncohorts;
   int<lower=1> N_cov;
   array[Nages, Ncohorts] int cohort_id;
-  matrix[Nages, Nyears] laa_obs;
-  array[2] real sigma_o_prior;
-  array[2] real sigma_p_prior;
-  int<lower=0, upper=1> est_cohort_effects;
-  int<lower=0, upper=1> est_year_effects;
-  int<lower=0, upper=1> est_init_effects;
-  int<lower=0, upper=1> est_cov_effects;
-  int<lower=0, upper=Ncohorts> N_eta_c;
-  int<lower=0, upper=Ncohorts> N_gamma_y;
-  int<lower=0, upper=Ncohorts> N_delta_c;
+  matrix[Nages, Nyears] laa_obs; //input length-at-age data
+  array[2] real sigma_o_prior; //observation error prior
+  array[2] real sigma_p_prior; //process error prior
+  int<lower=0, upper=1> est_cohort_effects; //boolean if cohort effects should be estimated
+  int<lower=0, upper=1> est_year_effects; //boolean if year effects should be estimated
+  int<lower=0, upper=1> est_init_effects; //boolean if initial size effects should be estimated
+  int<lower=0, upper=1> est_cov_effects; //boolean if temperature effects should be estimated
+  int<lower=0, upper=Ncohorts> N_eta_c; //Number of initial size effects
+  int<lower=0, upper=Ncohorts> N_gamma_y; //Number of year effects
+  int<lower=0, upper=Ncohorts> N_delta_c; //Number of cohort effects
   int<lower=0> n_proc_error;
-  array[N_cov] real cov_effect;
+  array[N_cov] real cov_effect; //data for enviromental covariates
 }
 
 parameters {
-  real<lower=-0.99, upper=0.99> beta;
-  real<lower=-0.99, upper=0.99> beta_e; //coefficient for cohort_effect_cov
-  array[1-est_init_effects] real X0;
-  real<lower=0> sigma_p;
-  real<lower=0> sigma_o;
-  vector[N_eta_c] eta_c_raw;
-  vector[N_gamma_y] gamma_y_raw;
-  vector[N_delta_c] delta_c_raw;
-  vector[N_cov] lambda_raw;
-  matrix[Nages, Nyears] laa_mis;
-  vector[n_proc_error] pro_error_raw;
+  real<lower=-0.99, upper=0.99> beta; //autocorrelation coefficient
+  real beta_e; //coefficient for cohort_effect_cov
+  array[1-est_init_effects] real X0; //starting size for initial age
+  real<lower=0> sigma_p; //process error
+  real<lower=0> sigma_o; //observation error
+  vector[N_eta_c] eta_c_raw; //raw initial size effect
+  vector[N_gamma_y] gamma_y_raw; //raw year effect
+  vector[N_delta_c] delta_c_raw; // raw cohort effect
+  matrix[Nages, Nyears] laa_mis; //imputed values for missing lengths-at-age
+  vector[n_proc_error] pro_error_raw; //raw process error
 
   array[est_init_effects] real<lower=0> eta_c_sd;
   array[est_cohort_effects] real<lower=0> delta_c_sd;
   array[est_year_effects] real<lower=0> gamma_y_sd;
-  array[est_cov_effects] real<lower=0> lambda_sd;
 }
 transformed parameters {
   matrix[Nages, Ncohorts] xaa;
@@ -53,7 +51,7 @@ transformed parameters {
     if (est_cov_effects){
       lambda_y[1] = 0;
       for(i in 2:N_cov){
-        lambda_y[i] = beta_e * cov_effect[i-1] + lambda_raw[i]*lambda_sd[1];
+        lambda_y[i] = beta_e * cov_effect[i-1];
 
       }
       for(i in (N_cov+1):Ncohorts){
@@ -68,8 +66,7 @@ transformed parameters {
       lambda_c[i] = 0;
     }
     for(i in (Ncohorts-N_cov+1):Ncohorts){
-      lambda_c[i] = beta_e * cov_effect[i-(Ncohorts-N_cov)] +
-      lambda_raw[i-(Ncohorts-N_cov)] * lambda_sd[1];
+      lambda_c[i] = beta_e * cov_effect[i-(Ncohorts-N_cov)];
     }
 }
   }
@@ -140,11 +137,6 @@ model {
    if (!est_init_effects) {
      X0[1] ~ normal(0, sigma_p);
    }
-   if(est_cov_effects) {
-     lambda_raw ~ std_normal();
-     lambda_sd ~ normal(0,1);
-   }
-
 }
 
 
