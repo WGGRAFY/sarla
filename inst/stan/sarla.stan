@@ -71,9 +71,13 @@ transformed parameters {
     if(est_cov_effects){
     if(y<(Ncohorts-N_cov+1)){
       lambda_c[y] = 0;
+      //print("y = ", y);
+      //print("lambda_c = ", lambda_c[y]);
     }
     if(y>=(Ncohorts-N_cov+1)){
+      //print(" cov effect = ",  cov_effect[y-(Ncohorts-N_cov)], " at index = ", y-(Ncohorts-N_cov));
       lambda_c[y] = beta_e * cov_effect[y-(Ncohorts-N_cov)];
+      //print("lambda_c = ", lambda_c[y]);
       xaa[1, y] = xaa[1,y] + lambda_c[y];
 
     }
