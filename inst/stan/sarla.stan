@@ -39,8 +39,8 @@ transformed parameters {
   vector[N_delta_c] delta_c;
   vector[N_gamma_y] gamma_y;
   vector[N_eta_c] eta_c;
-  vector[Ncohorts] lambda_c;
-  vector[Ncohorts] lambda_y;
+  vector[Ncohorts] lambda_c; //temperature effect for initial size
+  vector[Ncohorts] lambda_y; //temperature effect for year
   xaa = rep_matrix(0, Nages, Ncohorts); // initialize at 0
   matrix[Nages, Nyears] laa;
 
@@ -61,19 +61,24 @@ transformed parameters {
   }
    if (est_cohort_effects){
      delta_c = delta_c_raw * delta_c_sd[1];
-  if (est_cov_effects){
-    for(i in 1:(Ncohorts-N_cov+1)){
-      lambda_c[i] = 0;
-    }
-    for(i in (Ncohorts-N_cov+1):Ncohorts){
-      lambda_c[i] = beta_e * cov_effect[i-(Ncohorts-N_cov)];
-    }
-}
   }
 
   for (y in 1:Ncohorts) {
     if (!est_init_effects) xaa[1, y] = X0[1];
-    if (est_init_effects) xaa[1, y] = eta_c[y];
+
+  if (est_init_effects){
+      xaa[1, y] = eta_c[y];
+    if(est_cov_effects){
+    if(y<(Ncohorts-N_cov+1)){
+      lambda_c[y] = 0;
+    }
+    if(y>=(Ncohorts-N_cov+1)){
+      lambda_c[y] = beta_e * cov_effect[y-(Ncohorts-N_cov)];
+      xaa[1, y] = xaa[1,y] + lambda_c[y];
+
+    }
+      }
+    }
   }
 
     for(i in 1:Nages){
@@ -96,9 +101,6 @@ transformed parameters {
           xaa[i,y] = beta * xaa[i-1, y-1] + pro_error_raw[ii] * sigma_p;
           if (est_cohort_effects){
             xaa[i,y] = xaa[i,y] + delta_c[cohort_id[i,y]];
-            if (est_cov_effects){
-              xaa[i,y] = xaa[i,y] + lambda_c[cohort_id[i,y]];
-            }
           }
           if (est_year_effects) {
             xaa[i,y] = xaa[i,y] + gamma_y[y];
