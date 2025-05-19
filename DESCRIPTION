@@ -18,8 +18,7 @@ Imports:
     ggplot2,
     methods,
     nmfspalette,
-    reshape2,
-    stringr
+    reshape2
 VignetteBuilder: 
     knitr
 Suggests: 

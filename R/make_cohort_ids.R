@@ -20,6 +20,5 @@ make_cohort_ids <- function(Nages, Nyears) {
       }
     }
   }
-  m[m < Nages] <- NA
   m <- m - min(m, na.rm = TRUE) + 1
 }

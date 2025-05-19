@@ -39,15 +39,18 @@ plot_and_fill_data <- function(dat, year_effects = 1L,
   )
   stan_dat$cohort_id[is.na(stan_dat$cohort_id)] <- 999L # magic number
 
-  stan_dat$sigma_o_prior <- c(log(0.2), 0.5)
+  stan_dat$sigma_o_prior <- c(1, 1)
 
   stan_dat$est_year_effects <- year_effects
   stan_dat$est_cohort_effects <- cohort_effects
   stan_dat$est_init_effects <- init_effects
+  stan_dat$est_cov_effects <- ifelse(length(dat$cov_effect)>0,1L,0L)
 
   stan_dat$N_gamma_y <- stan_dat$Ncohorts
   stan_dat$N_eta_c <- stan_dat$Ncohorts
-  stan_dat$N_delta_c <- 0L
+  stan_dat$N_delta_c <- stan_dat$Ncohorts
+  stan_dat$cov_effect <- dat$cov_effect
+  stan_dat$N_cov <- length(dat$cov_effect)
 
   stan_dat$n_proc_error <- stan_dat$Ncohorts * stan_dat$Nages
 
