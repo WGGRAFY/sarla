@@ -17,6 +17,14 @@ process_length_data <- function(spp_data, common_, minimum_n,
   # Get mean stats
   mean_mat <- get_std_length(spp_data, ...)
 
+  #Get sample variance
+  summ <- 0
+  n <- nrow(spp_data)
+  for(i in nrow(spp_data)){
+    summ <- summ + (spp_data$length_cm[i] - mean_mat$meanl[which(mean_mat$age_years==spp_data$age_years[i])])^2
+  }
+  sample_var <- summ/(n-1)
+
   # Get rid of ages with fewer than minimum_n obs
   ages <- filter(mean_mat, count < minimum_n) %>% select(age_years)
 

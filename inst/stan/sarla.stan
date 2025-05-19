@@ -1,9 +1,10 @@
 data {
   int<lower=1> Nages;
   int<lower=1> Nyears;
+  int<lower=1> NFcohorts;
   int<lower=1> Ncohorts;
   int<lower=1> N_cov;
-  array[Nages, Ncohorts] int cohort_id;
+  array[Nages, NFcohorts] int cohort_id;
   matrix[Nages, Nyears] laa_obs; //input length-at-age data
   array[2] real sigma_o_prior; //observation error prior
   array[2] real sigma_p_prior; //process error prior
@@ -78,7 +79,9 @@ transformed parameters {
       //print(" cov effect = ",  cov_effect[y-(Ncohorts-N_cov)], " at index = ", y-(Ncohorts-N_cov));
       lambda_c[y] = beta_e * cov_effect[y-(Ncohorts-N_cov)];
       //print("lambda_c = ", lambda_c[y]);
-      xaa[1, y] = xaa[1,y] + lambda_c[y];
+      //xaa[1, y] = xaa[1,y] + lambda_c[y];
+xaa[1, y] = lambda_c[y];
+
 
     }
       }
@@ -97,7 +100,7 @@ transformed parameters {
   {
     int ii;
     ii = 0;
-    for (y in 2:Ncohorts) {
+    for (y in 2:NFcohorts) {
       for (i in 2:Nages) {
         if (cohort_id[i-1, y-1] != 999) { // 999 = magic number for NA
           ii = ii + 1;
@@ -106,12 +109,12 @@ transformed parameters {
           if (est_cohort_effects){
             xaa[i,y] = xaa[i,y] + delta_c[cohort_id[i,y]];
           }
-          if (est_year_effects) {
-            xaa[i,y] = xaa[i,y] + gamma_y[y];
-            if (est_cov_effects){
+          //if ((est_year_effects)&&(!(est_cov_effects))) {
+          //  xaa[i,y] = xaa[i,y] + gamma_y[y];
+            if (est_year_effects){
               xaa[i,y] = xaa[i,y] + lambda_y[y];
             }
-          }
+          //}
         }
       }
     }
@@ -124,7 +127,7 @@ model {
   sigma_o ~ lognormal(sigma_o_prior[1], sigma_o_prior[2]);
   // pro_error_raw ~ std_normal();
   to_vector(laa_mis) ~ normal(0, sigma_o);
-  to_vector(laa) ~ normal(to_vector(xaa[1:Nages, Nages:Ncohorts]), sigma_o);
+  to_vector(laa) ~ normal(to_vector(xaa[1:Nages, Nages:NFcohorts]), sigma_o);
   // sigma_p ~ normal(0, 1);
   beta ~ std_normal();
   beta_e ~ std_normal();
